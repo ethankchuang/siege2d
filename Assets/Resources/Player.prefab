@@ -51,7 +51,7 @@ GameObject:
   - component: {fileID: -6115681830701092075}
   - component: {fileID: 2411303850946398365}
   m_Layer: 0
-  m_Name: Player1
+  m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -195,7 +195,11 @@ MonoBehaviour:
   bulletTrail: {fileID: 2035908627529607136, guid: ac4508bb1331ca14cb15de632a378cc7, type: 3}
   weaponRange: 100
   muzzleFlashAnimator: {fileID: 0}
-  bulletForce: 20
+  spread: 0
+  maxAmmo: 20
+  currentAmmo: 20
+  timeBetweenShots: 0.1
+  reloadTime: 3
 --- !u!114 &7549814200760660685
 MonoBehaviour:
   m_ObjectHideFlags: 0

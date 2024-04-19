@@ -24,7 +24,7 @@ public class CameraController : MonoBehaviour
         if (SceneManager.GetActiveScene().name == "Game" && view.IsMine)
         {
             cameraHolder.transform.position = transform.position;
-            Debug.Log(cameraHolder.transform.position);
+            //Debug.Log(cameraHolder.transform.position);
             cameraHolder.transform.rotation = Quaternion.identity;
         }
     }
