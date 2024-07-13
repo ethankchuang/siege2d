@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.Tilemaps;
+using UnityEngine.Rendering.Universal;
 
 public class Shooting : MonoBehaviour
 {
@@ -11,31 +12,44 @@ public class Shooting : MonoBehaviour
     [SerializeField] public GameObject bulletTrail;
     [SerializeField] private float weaponRange = 100f;
     [SerializeField] private Animator muzzleFlashAnimator;
-    [SerializeField] private float spread;
+    [SerializeField] private float hipSpread;
+    [SerializeField] private float adsSpread;
     [SerializeField] private int maxAmmo;
     [SerializeField] private int currentAmmo;
     [SerializeField] private float timeBetweenShots;
     [SerializeField] private float reloadTime;
+
+    [SerializeField] private int innerAngle;
+    [SerializeField] private int outerAngle;
+    [SerializeField] private int adsInnerAngle;
+    [SerializeField] private int adsOuterAngle;
+
+    [SerializeField] private int damage;
 
 
     PhotonView view;
     bool firing = false;
     bool reloading = false;
     bool canShoot = true;
-    float spr;
+    bool isADS = false;
+    Vector3 spr;
 
+    [SerializeField] Light2D light2D;
 
     //public float bulletForce = 20f;
-    // Start is called before the first frame update
     void Start()
     {
         view = GetComponent<PhotonView>();
+        light2D.pointLightInnerAngle = innerAngle;
+        light2D.pointLightOuterAngle = outerAngle;
     }
 
     // Update is called once per frame
     void Update()
     {
         // shooting
+
+        // USE GET BUTTON INSTEAD OF GET BUTTON DOWN??
         if (Input.GetButtonDown("Fire1") || firing)
         {
             firing = true;
@@ -48,6 +62,21 @@ public class Shooting : MonoBehaviour
 
         // reloading
         if (Input.GetKeyDown("r") && !reloading) Invoke("Reload", reloadTime);
+
+        // block cam when ads
+        if (Input.GetButton("Fire2"))
+        {
+            light2D.pointLightInnerAngle = adsInnerAngle;
+            light2D.pointLightOuterAngle = adsOuterAngle;
+            isADS = true;
+        }
+        else if (isADS && Input.GetButtonUp("Fire2"))
+        {
+            light2D.pointLightInnerAngle = innerAngle;
+            light2D.pointLightOuterAngle = outerAngle;
+            isADS = false;
+        }
+
     }
 
     private void Reload()
@@ -61,13 +90,24 @@ public class Shooting : MonoBehaviour
         {
             if (canShoot && currentAmmo > 0)
             {
-                spr = Random.Range(-spread, spread);
+                if (isADS)
+                {
+                    spr = new Vector3(0, 0, Random.Range(-adsSpread, adsSpread));
+                }
+                else
+                {
+                    spr = new Vector3(0, 0, Random.Range(-hipSpread, hipSpread));
+                }
+
+                transform.Rotate(spr);
 
                 var hit = Physics2D.Raycast(
                     firePoint.position,
                     transform.up,
                     weaponRange
                 );
+
+                transform.Rotate(-spr);
 
                 var trail = Instantiate(
                     bulletTrail,
@@ -83,7 +123,7 @@ public class Shooting : MonoBehaviour
                     var hittable = hit.collider.GetComponent<IShootAble>();
                     if (hittable != null)
                     {
-                        hittable.RecieveHit(hit);
+                        hittable.RecieveHit(hit, damage);
                     }
                     else
                     {
@@ -101,7 +141,7 @@ public class Shooting : MonoBehaviour
                 }
                 canShoot = false;
                 currentAmmo --;
-                Debug.Log("current ammo = " + currentAmmo);
+                //Debug.Log("current ammo = " + currentAmmo);
                 Invoke("ShootingHelper", timeBetweenShots);
             }
         }

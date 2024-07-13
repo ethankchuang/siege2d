@@ -42,6 +42,21 @@ MonoBehaviour:
   - RecieveHit
   - TakeDamage
   - TakeDamageBarricade
+  - TakeDamageHelper
+  - placeDefuserHelper
+  - updateTime
+  - disarmDefuserHelper
+  - disarmingHelper
+  - spawn
+  - Update
+  - Create
+  - CreateHelper
+  - takeDmg
+  - explode
+  - throwGadget
+  - takeDmgInt
+  - takeDmgPos
+  - takeDmgTile
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

@@ -1,0 +1,147 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Rendering.Universal;
+
+public class ShotgunScript : MonoBehaviour, IWeaponScript  
+{
+    [SerializeField] public GameObject bulletTrail;
+    [SerializeField]private float weaponRange;
+    [SerializeField]private float adsRangeIncrease;
+    [SerializeField]private float hipSpread;
+    [SerializeField]private float adsSpread;
+    [SerializeField]private float maxAmmo;
+    private float currentAmmo;
+    [SerializeField]private float timeBetweenShots;
+    [SerializeField]private float reloadTime;
+    [SerializeField]private int adsInnerAngle;
+    [SerializeField]private int adsOuterAngle;
+    [SerializeField]private int damage;
+    bool firing = false;
+    bool reloading = false;
+    bool canShoot = true;
+    bool isADS = false;
+    Vector3 spr;
+
+
+
+    // for testing and funsies
+    [SerializeField] private int numBullets;
+
+    public void onStart()
+    {
+        currentAmmo = maxAmmo;
+        //Debug.Log("on start called " + currentAmmo);
+        reloading = false;
+    }
+
+    public void shoot(Transform firePoint)
+    {
+        //Debug.Log("shoot called " + canShoot + " can shoot " + currentAmmo + " current ammo");
+        //Debug.Log(firePoint.transform.rotation + " firepoint rotation");
+        
+        if (canShoot && currentAmmo > 0)
+        {
+            if (isADS)
+            {
+                spr = new Vector3(0, 0, adsSpread);
+            }
+            else
+            {
+                spr = new Vector3(0, 0, hipSpread);
+            }
+            
+            firePoint.transform.Rotate(-spr * 3/2);
+            for (int i = 0; i < numBullets; i ++)
+            {
+                var hit = Physics2D.Raycast(
+                    firePoint.position,
+                    firePoint.transform.up,
+                    weaponRange
+                );
+
+                var trail = Instantiate(
+                    bulletTrail,
+                    firePoint.position,
+                    firePoint.transform.rotation
+                );
+
+                var trailScript = trail.GetComponent<BulletTrailScript>();
+
+                if (hit.collider != null)
+                {
+                    trailScript.SetTargetPosition(hit.point);
+                    var hittable = hit.collider.GetComponent<IShootAble>();
+                    if (hittable != null)
+                    {
+                        hittable.RecieveHit(hit, damage);
+                    }
+                    else if (hit.collider.GetComponent<BarricadeScript>())
+                    {
+                        var hitBarricade = hit.collider.GetComponent<BarricadeScript>();
+                        if (hitBarricade != null)
+                        {
+                            hitBarricade.RecieveHit(hit.point, firePoint.transform.position.x, firePoint.transform.position.y);
+                        }
+                    }
+                    else if (hit.collider.GetComponent<SoftWallScript>())
+                    {
+                        var hitSoftWall = hit.collider.GetComponent<SoftWallScript>();
+                        if (hitSoftWall != null)
+                        {
+                            hitSoftWall.RecieveHitRaycast(hit, firePoint.transform.position.x, firePoint.transform.position.y);
+                        }
+                    }
+                }
+                else
+                {
+                    var endPosition = firePoint.position + firePoint.up * weaponRange;
+                    trailScript.SetTargetPosition(endPosition);
+                }
+
+                // get ready for next bullet
+                firePoint.transform.Rotate(spr);
+            }
+
+            canShoot = false;
+            currentAmmo --;
+            //Debug.Log("current ammo = " + currentAmmo);
+            Invoke("ShootingHelper", timeBetweenShots);
+            firePoint.transform.Rotate(-spr * 5/2);
+        }
+    }
+    private void ShootingHelper()
+    {
+        canShoot = true;
+    }
+
+    public void reload()
+    {
+        Debug.Log("reload called " + reloading);
+        if (!reloading)
+        {
+            Invoke(nameof(reloadHelper), reloadTime);
+            reloading = true;
+        }
+    }
+    public void reloadHelper()
+    {
+        Debug.Log("reload helper called");
+        currentAmmo = maxAmmo;
+        reloading = false;
+    }
+    public void aimDownSight(Light2D light2D)
+    {
+        light2D.pointLightInnerAngle = adsInnerAngle;
+        light2D.pointLightOuterAngle = adsOuterAngle;
+        weaponRange += adsRangeIncrease;
+        isADS = true;
+    }
+    public void hipFire(Light2D light2D, float innerAngle, float outerAngle)
+    {
+        light2D.pointLightInnerAngle = innerAngle;
+        light2D.pointLightOuterAngle = outerAngle;
+        weaponRange -= adsRangeIncrease;
+        isADS = false;
+    }
+}

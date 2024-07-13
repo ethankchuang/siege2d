@@ -1,0 +1,126 @@
+using System.Collections;
+using System.Collections.Generic;
+using Photon.Pun;
+using UnityEngine;
+using UnityEngine.UIElements;
+
+
+public class Game : MonoBehaviour
+{
+    public List<GameObject> defPlayerList;
+    public List<GameObject> atkPlayerList;
+    public List<GameObject> defAlive;
+    public List<GameObject> atkAlive;
+    private int defPoints;
+    private int atkPoints;
+    [SerializeField] int PointsToWin;
+    private PhotonView view;
+
+    [SerializeField] private GameObject winRoundBG;
+    [SerializeField] private GameObject loseRoundBG;
+    [SerializeField] private GameObject winGameBG;
+    [SerializeField] private GameObject loseGameBG;
+
+
+
+    public void Start()
+    {
+        defPlayerList = new List<GameObject>();
+        atkPlayerList = new List<GameObject>();
+        defAlive = new List<GameObject>();
+        atkAlive = new List<GameObject>();
+        defPoints = 0;
+        atkPoints = 0;
+        view = GetComponent<PhotonView>();
+    }
+
+    public void addToList(GameObject player, bool isDef)
+    {
+        if (isDef)
+        {
+            defPlayerList.Add(player);
+        }
+        else
+        {
+            atkPlayerList.Add(player);
+        }
+    }
+
+    public void prepActiveList()
+    {
+        defAlive = defPlayerList;
+        atkAlive = atkPlayerList;
+    }
+
+    public bool removeFromList(GameObject player, bool isDef)
+    {
+        if (isDef)
+        {
+            defAlive.Remove(player);
+            if (defAlive.Count <= 0)
+            {
+                //view.RPC(nameof(endRound), RpcTarget.All, false);
+                //endRound(false);
+
+                atkPoints ++;
+                if (atkPoints >= PointsToWin)
+                {
+                    endGame(false);
+                }
+                else
+                {
+                    // what happens when u win the round 
+                }
+                return true;
+            }
+        }
+        else
+        {
+            atkAlive.Remove(player);
+            if (atkAlive.Count <= 0)
+            {
+                //view.RPC(nameof(endRound), RpcTarget.All, true);
+                //endRound(true);
+
+
+                defPoints ++;
+                if (defPoints >= PointsToWin)
+                {
+                    endGame(true);
+                }
+                else
+                {
+                    // what happens when u win the round
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //[PunRPC]
+    /*public void endRound(bool defWin)
+    {
+        if (defWin) 
+        {
+            defPoints ++;
+            if (defPoints >= PointsToWin)
+            {
+                endGame(true);
+            }
+        }
+        else
+        {
+            atkPoints ++;
+            if (atkPoints >= PointsToWin)
+            {
+                endGame(false);
+            }
+        }
+    }*/
+
+    public void endGame(bool defWin)
+    {
+
+    }
+}

@@ -12,21 +12,21 @@ TagManager:
   - 
   - Water
   - UI
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
   - walls
   - 
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - floor
   - 
   - 
   - 
@@ -42,6 +42,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: New Layer 1
+  - name: floor
     uniqueID: 1997170843
+    locked: 0
+  - name: walls
+    uniqueID: 1680516675
+    locked: 0
+  - name: defaultCams
+    uniqueID: 1074166345
+    locked: 0
+  - name: Player
+    uniqueID: 2002490965
+    locked: 0
+  - name: Camera
+    uniqueID: 935749105
     locked: 0

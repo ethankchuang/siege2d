@@ -10,6 +10,8 @@ public class CameraController : MonoBehaviour
     public GameObject cameraHolder;
     PhotonView view;
 
+    Vector3 pos;
+
     public void Start()
     {
         view = GetComponent<PhotonView>();
@@ -23,7 +25,10 @@ public class CameraController : MonoBehaviour
     {
         if (SceneManager.GetActiveScene().name == "Game" && view.IsMine)
         {
-            cameraHolder.transform.position = transform.position;
+            
+            pos = new Vector3(transform.position.x, transform.position.y /*+ 5*/, transform.position.z);
+
+            cameraHolder.transform.position = pos;
             //Debug.Log(cameraHolder.transform.position);
             cameraHolder.transform.rotation = Quaternion.identity;
         }

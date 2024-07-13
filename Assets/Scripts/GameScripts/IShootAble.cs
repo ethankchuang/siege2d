@@ -6,7 +6,6 @@ using UnityEngine;
 //[PunRPC]
 public interface IShootAble
 {
-    public void RecieveHit(RaycastHit2D hit);
-
-    public void TakeDamage();
+    public void RecieveHit(RaycastHit2D hit, int damage);
+    public void TakeDamage(int damage);
 }
