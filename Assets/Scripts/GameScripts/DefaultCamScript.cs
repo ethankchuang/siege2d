@@ -6,12 +6,8 @@ using UnityEngine;
 public class DefaultCamScript : MonoBehaviour
 {
     private List<GameObject> camList;
-    private List<GameObject> atkPlayerList;
-    private List<GameObject> defPlayerList;
     private GameObject currentCam;
     private GameObject prevCam;
-    private GameObject currentPlayer;
-    public bool isSpectating;
     private Game game;
     //private GameObject defaultCams;
 
@@ -29,7 +25,6 @@ public class DefaultCamScript : MonoBehaviour
         }
         currentCam = camList[0];
 
-        isSpectating = false;
         game = GameObject.Find("Game").GetComponent<Game>();
 
     }
@@ -52,6 +47,16 @@ public class DefaultCamScript : MonoBehaviour
             currentCam = camList[camList.IndexOf(currentCam) + 1];
             openCam(playerCam);
         }  
+    }
+
+    public void allLightsOn()
+    {
+        foreach (GameObject cam in camList)
+        {
+            cam.gameObject.SetActive(true);
+            cam.transform.parent.gameObject.GetComponent<CamScript>().lightOn();
+            cam.transform.GetChild(0).gameObject.SetActive(false);
+        }
     }
 
     public void exitCam(GameObject playerCam)
@@ -118,109 +123,5 @@ public class DefaultCamScript : MonoBehaviour
             prevCam.SetActive(false);
             currentCam.transform.parent.gameObject.GetComponent<CamScript>().lightOn();
         }
-    }
-
-    public void startSpectating(GameObject  player, bool isDef)
-    {        
-        Debug.Log("start spectating called ");
-        atkPlayerList = game.atkAlive;
-        defPlayerList = game.defAlive;
-        player.transform.Find("CameraHolder").gameObject.SetActive(false);
-        player.transform.Find("Spot Light 2D").gameObject.SetActive(false);
-
-        isSpectating = true;
-        // need to set active later
-
-        if (isDef)
-        {
-            currentPlayer = defPlayerList[0];
-        }
-        else
-        {
-            currentPlayer = atkPlayerList[0];
-        }
-        currentPlayer.transform.Find("CameraHolder").gameObject.SetActive(true);
-        currentPlayer.transform.Find("Spot Light 2D").gameObject.SetActive(true);
-
-    }
-
-    public void spectateLeft(bool isDef)
-    {
-        atkPlayerList = game.atkAlive;
-        defPlayerList = game.defAlive;
-        currentPlayer.transform.Find("CameraHolder").gameObject.SetActive(false);
-        currentPlayer.transform.Find("Spot Light 2D").gameObject.SetActive(false);
-
-        if (isDef)
-        {
-            if (defPlayerList.IndexOf(currentPlayer) == 0)
-            {
-                currentPlayer = defPlayerList[defPlayerList.Count - 1];
-            }
-            else 
-            {
-                currentPlayer = defPlayerList[defPlayerList.IndexOf(currentPlayer) - 1];
-            }
-        }
-        else
-        {
-            if (atkPlayerList.IndexOf(currentPlayer) == 0)
-            {
-                currentPlayer = atkPlayerList[atkPlayerList.Count - 1];
-            }
-            else 
-            {
-                currentPlayer = atkPlayerList[atkPlayerList.IndexOf(currentPlayer) - 1];
-            }
-        }
-
-        currentPlayer.transform.Find("CameraHolder").gameObject.SetActive(true);
-        currentPlayer.transform.Find("Spot Light 2D").gameObject.SetActive(true);
-    }
-    
-    public void spectateRight(bool isDef)
-    {
-        atkPlayerList = game.atkAlive;
-        defPlayerList = game.defAlive;
-        currentPlayer.transform.Find("CameraHolder").gameObject.SetActive(false);
-        currentPlayer.transform.Find("Spot Light 2D").gameObject.SetActive(false);
-
-        if (isDef)
-        {
-            if (defPlayerList.IndexOf(currentPlayer) == (defPlayerList.Count - 1))
-            {
-                currentPlayer = defPlayerList[0];
-            }
-            else 
-            {
-                currentPlayer = defPlayerList[defPlayerList.IndexOf(currentPlayer) + 1];
-            }
-        }
-        else
-        {
-            if (atkPlayerList.IndexOf(currentPlayer) == (atkPlayerList.Count - 1))
-            {
-                currentPlayer = atkPlayerList[0];
-            }
-            else 
-            {
-                currentPlayer = atkPlayerList[atkPlayerList.IndexOf(currentPlayer) + 1];
-            }
-        }
-        currentPlayer.transform.Find("CameraHolder").gameObject.SetActive(true);
-        currentPlayer.transform.Find("Spot Light 2D").gameObject.SetActive(true);
-    }
-
-    public void switchToCams()
-    {
-        isSpectating = false;
-        currentPlayer.transform.Find("CameraHolder").gameObject.SetActive(false);
-        currentPlayer.transform.Find("Spot Light 2D").gameObject.SetActive(false);
-        openCam(currentPlayer.transform.Find("CameraHolder").gameObject);
-    }
-
-    public List<GameObject> getCamList()
-    {
-        return camList;
     }
 }

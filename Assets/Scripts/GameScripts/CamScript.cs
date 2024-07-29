@@ -19,12 +19,12 @@ public class CamScript : MonoBehaviour, IShootAble
     public void lightOn()
     {
         redLight.SetActive(true);
-        Debug.Log("light on");
+        //Debug.Log("light on");
     }
     public void lightOff()
     {
         redLight.SetActive(false);
-        Debug.Log("light off");
+        //Debug.Log("light off");
     }
     public bool getIsActive()
     {

@@ -20,6 +20,10 @@ public class NewTimer : MonoBehaviour
     [SerializeField] TextMeshProUGUI bombPlantedText;
     ExitGames.Client.Photon.Hashtable CustomeValue;
 
+    // temp
+    int waitCounter = 0;
+    bool stopWaiting = true;
+
     public void Start()
     {
         if (PhotonNetwork.LocalPlayer.IsMasterClient)
@@ -33,15 +37,26 @@ public class NewTimer : MonoBehaviour
         }
         else
         {
-            startTime = double.Parse(PhotonNetwork.CurrentRoom.CustomProperties["StartTime"].ToString());
-            startTimer = true;
+            waitCounter = 3;
+            stopWaiting = false;
         }
     }
 
     public void Update()
     {
+        
+        if (!stopWaiting && waitCounter >= 0)
+        {
+            waitCounter --;
+            if (waitCounter <= 0)
+            {
+                startTime = double.Parse(PhotonNetwork.CurrentRoom.CustomProperties["StartTime"].ToString());
+                startTimer = true;
+            }
+        }
 
         if (!startTimer) return;
+
 
 
         timerIncrementValue = timer - (PhotonNetwork.Time - startTime);

@@ -32,20 +32,6 @@ public class SpawnPlayers : MonoBehaviour
     {
         Debug.Log("spawn players has been run and player count is " + playerCount);
 
-        /*if (PhotonNetwork.LocalPlayer.IsMasterClient)
-        {
-            CustomeValue = new ExitGames.Client.Photon.Hashtable
-            {
-                { "PlayerCount", playerCount }
-            };
-            PhotonNetwork.CurrentRoom.SetCustomProperties(CustomeValue);
-            Debug.Log(playerCount);
-        }
-        else
-        {
-            playerCount = int.Parse(PhotonNetwork.CurrentRoom.CustomProperties["PlayerCount"].ToString());
-        }  
-        */
         defSpawnPoints = new List<GameObject>();
         atkSpawnPoints = new List<GameObject>();
         usedDefSpawnPoints = new List<GameObject>();
@@ -60,8 +46,7 @@ public class SpawnPlayers : MonoBehaviour
             atkSpawnPoints.Add(atkPointParent.transform.GetChild(i).gameObject); 
         }        
 
-
-        if (PhotonNetwork.CurrentRoom.PlayerCount % 2 == 1)
+        if ((bool)PhotonNetwork.LocalPlayer.CustomProperties["isDef"])
         {
             currentSpawnPoint = defSpawnPoints[Random.Range(0, defSpawnPoints.Count)];
 
@@ -101,15 +86,5 @@ public class SpawnPlayers : MonoBehaviour
         }
 
         Debug.Log(PhotonNetwork.CurrentRoom.PlayerCount);
-        
-        
-
-        /*CustomeValue = new ExitGames.Client.Photon.Hashtable
-        {
-            { "PlayerCount", playerCount }
-        };
-        PhotonNetwork.CurrentRoom.SetCustomProperties(CustomeValue);
-        */
-
     }
 }

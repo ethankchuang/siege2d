@@ -36,6 +36,7 @@ public class Game : MonoBehaviour
 
     public void addToList(GameObject player, bool isDef)
     {
+        Debug.Log("add to list called");
         if (isDef)
         {
             defPlayerList.Add(player);
@@ -48,12 +49,14 @@ public class Game : MonoBehaviour
 
     public void prepActiveList()
     {
+        Debug.Log("prepping list");
         defAlive = defPlayerList;
         atkAlive = atkPlayerList;
     }
 
     public bool removeFromList(GameObject player, bool isDef)
     {
+        Debug.Log("removing from list");
         if (isDef)
         {
             defAlive.Remove(player);

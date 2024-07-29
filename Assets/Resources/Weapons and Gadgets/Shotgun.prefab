@@ -45,14 +45,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletTrail: {fileID: 2035908627529607136, guid: ac4508bb1331ca14cb15de632a378cc7, type: 3}
-  weaponRange: 3
+  weaponRange: 5
   adsRangeIncrease: 2
   hipSpread: 5
   adsSpread: 2.5
   maxAmmo: 7
   timeBetweenShots: 0.9
-  reloadTime: 2
+  reloadTime: 4
   adsInnerAngle: 20
   adsOuterAngle: 40
   damage: 20
+  shotSoundClip: {fileID: 8300000, guid: 2a4aeeca29a438c46b02ddb82dbbb647, type: 3}
+  reloadSoundClip: {fileID: 8300000, guid: f4aec737a73ffbf4d86db99f0f8b8b1b, type: 3}
   numBullets: 4

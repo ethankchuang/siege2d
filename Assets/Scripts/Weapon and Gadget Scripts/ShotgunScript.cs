@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -17,13 +20,14 @@ public class ShotgunScript : MonoBehaviour, IWeaponScript
     [SerializeField]private int adsInnerAngle;
     [SerializeField]private int adsOuterAngle;
     [SerializeField]private int damage;
+    [SerializeField]private AudioClip shotSoundClip;
+    [SerializeField]private AudioClip reloadSoundClip;
     bool firing = false;
     bool reloading = false;
     bool canShoot = true;
     bool isADS = false;
     Vector3 spr;
-
-
+    private Transform muzzleFlash;
 
     // for testing and funsies
     [SerializeField] private int numBullets;
@@ -35,13 +39,22 @@ public class ShotgunScript : MonoBehaviour, IWeaponScript
         reloading = false;
     }
 
-    public void shoot(Transform firePoint)
+    public void shoot(Transform firePoint, AudioSource audioSource)
     {
         //Debug.Log("shoot called " + canShoot + " can shoot " + currentAmmo + " current ammo");
         //Debug.Log(firePoint.transform.rotation + " firepoint rotation");
         
         if (canShoot && currentAmmo > 0)
         {
+            audioSource.clip = shotSoundClip;
+            audioSource.Play();
+
+            int rand = UnityEngine.Random.Range(0, 3);
+            muzzleFlash = firePoint.GetChild(0).GetChild(rand);
+            muzzleFlash.gameObject.SetActive(true);
+            Animator muzzle = firePoint.GetChild(0).GetComponent<Animator>();
+            muzzle.SetTrigger("Shoot");
+
             if (isADS)
             {
                 spr = new Vector3(0, 0, adsSpread);
@@ -113,15 +126,18 @@ public class ShotgunScript : MonoBehaviour, IWeaponScript
     private void ShootingHelper()
     {
         canShoot = true;
+        muzzleFlash.gameObject.SetActive(false);
     }
 
-    public void reload()
+    public void reload(AudioSource audioSource)
     {
         Debug.Log("reload called " + reloading);
         if (!reloading)
         {
             Invoke(nameof(reloadHelper), reloadTime);
             reloading = true;
+            audioSource.clip = reloadSoundClip;
+            audioSource.Play();
         }
     }
     public void reloadHelper()

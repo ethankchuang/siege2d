@@ -27,7 +27,7 @@ public class AssaultRifleScript : MonoBehaviour, IWeaponScript
         currentAmmo = maxAmmo;
         Debug.Log("on start called " + currentAmmo);
     }
-    public void shoot(Transform firePoint)
+    public void shoot(Transform firePoint, AudioSource audioSource)
     {
         //Debug.Log("shoot called " + canShoot + " ca n shoot " + currentAmmo + " current ammo");
         if (canShoot && currentAmmo > 0)
@@ -92,12 +92,13 @@ public class AssaultRifleScript : MonoBehaviour, IWeaponScript
         canShoot = true;
     }
 
-    public void reload()
+    public void reload(AudioSource audioSource)
     {
         if (!reloading)
         {
             Invoke(nameof(reloadHelper), reloadTime);
             reloading = true;
+            
         }
     }
 

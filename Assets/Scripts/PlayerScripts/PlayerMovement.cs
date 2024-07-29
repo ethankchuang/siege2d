@@ -7,6 +7,7 @@ using Photon.Pun;
 using UnityEditor;
 using Unity.Mathematics;
 using UnityEngine.Rendering.Universal;
+using Unity.VisualScripting;
 
 public class PlayerMovement : MonoBehaviour, IShootAble
 {
@@ -34,13 +35,20 @@ public class PlayerMovement : MonoBehaviour, IShootAble
     private IWeaponScript currentWeaponScript;
     float lightOuterAngle;
     float lightInnerAngle;
-    private GameObject deathScreen;
+    //private GameObject deathScreen;
     private Game game;
     private bool isDead;
     private bool isDef;
 
     // testing secondary gadgets
     [SerializeField] private GameObject flashBang;
+    private GameObject reticle;
+    UnityEngine.Vector3 reticlePos;
+    [SerializeField] GameObject selfSprite;
+    [SerializeField] GameObject shadowSprite;
+    [SerializeField] GameObject spectateCam;
+    private DeathScreen deathScreen;
+    private bool isSpectating;
 
 
     public void Start()
@@ -49,6 +57,8 @@ public class PlayerMovement : MonoBehaviour, IShootAble
         if (view.IsMine)
         {
             spotLight2D.SetActive(true);
+            selfSprite.SetActive(true);
+            shadowSprite.SetActive(false);
         }
 
         isDef = gameObject.GetComponent<PlaceDefuser>() == null;
@@ -66,24 +76,30 @@ public class PlayerMovement : MonoBehaviour, IShootAble
         lightOuterAngle = spotLight2D.GetComponent<Light2D>().pointLightOuterAngle;
         lightInnerAngle = spotLight2D.GetComponent<Light2D>().pointLightInnerAngle;
 
-        currentWeaponScript = currentWeapon.GetComponent<ShotgunScript>();
+        currentWeaponScript = currentWeapon.GetComponent<IWeaponScript>();
         currentWeaponScript.onStart();
 
-        deathScreen = GameObject.Find("Canvas").transform.Find("DeathBG").gameObject;
+        deathScreen = GameObject.Find("Canvas").transform.Find("DeathBG").GetComponent<DeathScreen>();
         game = GameObject.Find("Game").GetComponent<Game>();
+
+        reticle = GameObject.Find("reticle");
+        Cursor.visible = false;
+
+        isSpectating = false;
     }
 
     public void Update()
     {
         if (view.IsMine)
         {
-
             if (!isDead)
             {
                 movement.x = Input.GetAxisRaw("Horizontal");
                 movement.y = Input.GetAxisRaw("Vertical");
 
                 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
+                reticlePos = new UnityEngine.Vector3(cam.ScreenToWorldPoint(Input.mousePosition).x, cam.ScreenToWorldPoint(Input.mousePosition).y, cam.ScreenToWorldPoint(Input.mousePosition).z + 30);
+                reticle.transform.position = reticlePos;
 
                 //sprinting
                 if (Input.GetKey(KeyCode.LeftShift)) moveSpeed = sprintSpeed;
@@ -92,12 +108,12 @@ public class PlayerMovement : MonoBehaviour, IShootAble
                 if (Input.GetButton("Fire1"))
                 {
                     //Debug.Log("fire1 down");
-                    currentWeaponScript.shoot(transform.Find("FirePoint"));
+                    currentWeaponScript.shoot(transform.Find("FirePoint"), GetComponent<AudioSource>());
                 }      
                 if (Input.GetKeyDown("r"))
                 {
                     //Debug.Log("r down");
-                    currentWeaponScript.reload();
+                    currentWeaponScript.reload(GetComponent<AudioSource>());
                 }
                 if (Input.GetButtonDown("Fire2"))
                 {
@@ -109,50 +125,41 @@ public class PlayerMovement : MonoBehaviour, IShootAble
                     //Debug.Log("fire2 up");
                     currentWeaponScript.hipFire(spotLight2D.GetComponent<Light2D>(), lightInnerAngle, lightOuterAngle);
                 }
-
+                //DEFAULT CAM SCRIPT
+                if (Input.GetKeyDown("5") && !isWatchingCam)
+                {
+                    defaultCamScript.openCam(cameraHolder);
+                    playerLocked = true;
+                    isWatchingCam = true;
+                    spotLight2D.SetActive(false);
+                }
+                else if (Input.GetKeyDown("5") && isWatchingCam)
+                {
+                    defaultCamScript.exitCam(cameraHolder);
+                    playerLocked = false;
+                    isWatchingCam = false;
+                    spotLight2D.SetActive(true);
+                }
+                else if (isWatchingCam && Input.GetKeyDown("q"))
+                {
+                    defaultCamScript.scrollCamLeft(false);
+                }
+                else if (isWatchingCam && Input.GetKeyDown("e"))
+                {
+                    defaultCamScript.scrollCamRight(false);
+                } 
             }
-
-            //DEFAULT CAM SCRIPT
-            if ((Input.GetKeyDown("5") && !isWatchingCam) || (Input.GetKeyDown("5") && isDead && defaultCamScript.isSpectating))
-            {
-                defaultCamScript.openCam(cameraHolder);
-                playerLocked = true;
-                isWatchingCam = true;
+            else //if is dead
+            { 
+                if (!isSpectating && deathScreen.startSpectating)
+                {
+                    startSpectating();
+                    deathScreen.gameObject.SetActive(false);
+                    isSpectating = true;
+                    deathScreen.resetTimer();
+                    gameObject.SetActive(false);
+                }
             }
-            else if (Input.GetKeyDown("5") && isWatchingCam)
-            {
-                defaultCamScript.exitCam(cameraHolder);
-                playerLocked = false;
-                isWatchingCam = false;
-            }
-            else if (isWatchingCam && Input.GetKeyDown("q"))
-            {
-                defaultCamScript.scrollCamLeft(false);
-            }
-            else if (isWatchingCam && Input.GetKeyDown("e"))
-            {
-                defaultCamScript.scrollCamRight(false);
-            }
-
-            //SPECTATING SCRIPT
-            else if (Input.GetKeyDown("5") && isDead && !defaultCamScript.isSpectating)
-            {
-                defaultCamScript.startSpectating(gameObject, isDef);
-                //playerLocked = true;
-                //isWatchingCam = true;
-            }
-            else if (Input.GetKeyDown("5") && isDead && defaultCamScript.isSpectating)
-            {
-                defaultCamScript.switchToCams();
-            }
-            else if (defaultCamScript.isSpectating && isDead && Input.GetKeyDown("q"))
-            {
-                defaultCamScript.spectateLeft(isDef);
-            }
-            else if (defaultCamScript.isSpectating && isDead && Input.GetKeyDown("e"))
-            {
-                defaultCamScript.spectateRight(isDef);
-            } 
         }
     }
 
@@ -192,17 +199,43 @@ public class PlayerMovement : MonoBehaviour, IShootAble
 
             healthBarScript.adjustSlider(health);
 
-            if (health <= 0)
+            if (health <= 0 && !isDead)
             {
-                //deathScreen.SetActive(true);
+                // player lists currently bugged
+
                 isDead = true;
-                Debug.Log("player has died and game is over? " + !game.removeFromList(gameObject, isDef));
-                if (!game.removeFromList(gameObject, isDef))
-                {
-                    //maybe wait a couple seconds after death screen or smth
-                    defaultCamScript.startSpectating(gameObject, isDef);
-                }
-                // TODO follow teammates cam after set seconds
+                //Debug.Log("player has died and game is over? " + !game.removeFromList(gameObject, isDef));
+                //if (!game.removeFromList(gameObject, isDef))
+                //{
+                        //maybe wait a couple seconds after death screen or smth
+                    Debug.Log("game not over");
+                    deathScreen.gameObject.SetActive(true);
+                    deathScreen.startTimer();
+                //}
+            }
+        }
+    }
+
+    public void startSpectating()
+    {
+        Instantiate(spectateCam, new UnityEngine.Vector3(-5.5f, 0.5f, -12f), quaternion.identity);
+        cameraHolder.SetActive(false);
+        Cursor.visible = true;
+        reticle.SetActive(false);
+
+        if (isDef) {
+            defaultCamScript.allLightsOn();
+        }
+
+        if (isDef) {
+            Debug.Log(game.defAlive.Count + " def alive");
+            foreach (GameObject player in game.defAlive) {
+                player.transform.GetChild(3).gameObject.SetActive(true);
+            }
+        }
+        else {
+            foreach (GameObject player in game.atkAlive) {
+                player.transform.GetChild(3).gameObject.SetActive(true);
             }
         }
     }
