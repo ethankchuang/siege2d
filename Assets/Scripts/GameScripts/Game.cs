@@ -7,8 +7,8 @@ using UnityEngine.UIElements;
 
 public class Game : MonoBehaviour
 {
-    public List<GameObject> defPlayerList;
-    public List<GameObject> atkPlayerList;
+    //public List<GameObject> defPlayerList;
+    //public List<GameObject> atkPlayerList;
     public List<GameObject> defAlive;
     public List<GameObject> atkAlive;
     private int defPoints;
@@ -25,8 +25,8 @@ public class Game : MonoBehaviour
 
     public void Start()
     {
-        defPlayerList = new List<GameObject>();
-        atkPlayerList = new List<GameObject>();
+        //defPlayerList = new List<GameObject>();
+        //atkPlayerList = new List<GameObject>();
         defAlive = new List<GameObject>();
         atkAlive = new List<GameObject>();
         defPoints = 0;
@@ -34,7 +34,7 @@ public class Game : MonoBehaviour
         view = GetComponent<PhotonView>();
     }
 
-    public void addToList(GameObject player, bool isDef)
+    /*public void addToList(GameObject player, bool isDef)
     {
         Debug.Log("add to list called");
         if (isDef)
@@ -45,16 +45,44 @@ public class Game : MonoBehaviour
         {
             atkPlayerList.Add(player);
         }
+    }*/
+
+    public void createPlayerLists() 
+    {
+        foreach (GameObject player in FindObjectsOfType<GameObject>())
+        {
+            Debug.Log("gameobject is player? " + (player.GetComponent<PlayerMovement>() != null));
+            if (player.GetComponent<PlayerMovement>() != null)
+            {
+                if(player.GetComponent<PlaceDefuser>() != null)
+                {
+                    //atkPlayerList.Add(player);
+                    atkAlive.Add(player);
+                }
+                else if (player.GetComponent<DisarmDefuser>() != null)
+                {
+                    //defPlayerList.Add(player);
+                    defAlive.Add(player);
+                }
+            }
+        }
+        //prepActiveList();
     }
 
-    public void prepActiveList()
+    /*public void prepActiveList()
     {
         Debug.Log("prepping list");
+        Debug.Log("defPlayerList " + defPlayerList.Count);
+        Debug.Log("attackPlayerList " + atkPlayerList.Count);
         defAlive = defPlayerList;
         atkAlive = atkPlayerList;
-    }
+        Debug.Log("defAlive " + defAlive.Count);
+        Debug.Log("atkAlive " + atkAlive.Count);
+        Debug.Log((defAlive == defPlayerList) + " def lists =?");
+        Debug.Log((atkAlive == atkPlayerList) + " atk lists =?");
+    }*/
 
-    public bool removeFromList(GameObject player, bool isDef)
+    /*public bool removeFromList(GameObject player, bool isDef)
     {
         Debug.Log("removing from list");
         if (isDef)
@@ -99,7 +127,7 @@ public class Game : MonoBehaviour
             }
         }
         return false;
-    }
+    }*/
 
     //[PunRPC]
     /*public void endRound(bool defWin)

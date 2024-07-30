@@ -58,11 +58,11 @@ public class SpawnPlayers : MonoBehaviour
             pos = currentSpawnPoint.transform.position;
             usedDefSpawnPoints.Add(currentSpawnPoint);
 
-            //PhotonNetwork.Instantiate(defenderPrefab.name, pos, Quaternion.identity);
-            game.addToList(PhotonNetwork.Instantiate(defenderPrefab.name, pos, Quaternion.identity), true);
+            PhotonNetwork.Instantiate(defenderPrefab.name, pos, Quaternion.identity);
+            //game.addToList(PhotonNetwork.Instantiate(defenderPrefab.name, pos, Quaternion.identity), true);
 
             // FOR TESTING ONLY
-            game.prepActiveList();
+            //game.prepActiveList();
             Debug.Log("player 1 (defender) joined the game");
         }
         else
@@ -77,11 +77,11 @@ public class SpawnPlayers : MonoBehaviour
             pos = currentSpawnPoint.transform.position;
             usedAtkSpawnPoints.Add(currentSpawnPoint);
 
-            //PhotonNetwork.Instantiate(attackerPrefab.name, pos, Quaternion.identity);
-            game.addToList(PhotonNetwork.Instantiate(attackerPrefab.name, pos, Quaternion.identity), false);
+            PhotonNetwork.Instantiate(attackerPrefab.name, pos, Quaternion.identity);
+            //game.addToList(PhotonNetwork.Instantiate(attackerPrefab.name, pos, Quaternion.identity), false);
 
             // FOR TESTING ONLY
-            game.prepActiveList();
+            //game.prepActiveList();
             Debug.Log("player 2 (attacker) joined the game");
         }
 

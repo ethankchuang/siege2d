@@ -324,8 +324,8 @@ MonoBehaviour:
   defPlayerList: []
   atkPlayerList: []
   listedPlayerPrefab: {fileID: 6358998439640491286, guid: 92ff13c1397b0da4794ef6a0b2230339, type: 3}
-  attackList: {fileID: 444287795}
-  defenceList: {fileID: 664256317}
+  attackList: {fileID: 664256317}
+  defenceList: {fileID: 444287795}
   playButton: {fileID: 314206819}
 --- !u!4 &114031478
 Transform:
@@ -782,7 +782,7 @@ GameObject:
   - component: {fileID: 444287797}
   - component: {fileID: 444287796}
   m_Layer: 5
-  m_Name: AttackerList
+  m_Name: DefenderList
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -956,7 +956,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 421997763}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.9998762
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1012,7 +1012,7 @@ GameObject:
   - component: {fileID: 664256319}
   - component: {fileID: 664256318}
   m_Layer: 5
-  m_Name: DefenderList
+  m_Name: AttakerList
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1432,7 +1432,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00014756506}
+  m_AnchoredPosition: {x: 0, y: 0.000033212185}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &818869636

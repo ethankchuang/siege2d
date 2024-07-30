@@ -81,6 +81,7 @@ public class PlayerMovement : MonoBehaviour, IShootAble
 
         deathScreen = GameObject.Find("Canvas").transform.Find("DeathBG").GetComponent<DeathScreen>();
         game = GameObject.Find("Game").GetComponent<Game>();
+        //Debug.Log((game == null) + " game = null");
 
         reticle = GameObject.Find("reticle");
         Cursor.visible = false;
@@ -155,9 +156,8 @@ public class PlayerMovement : MonoBehaviour, IShootAble
                 {
                     startSpectating();
                     deathScreen.gameObject.SetActive(false);
-                    isSpectating = true;
                     deathScreen.resetTimer();
-                    gameObject.SetActive(false);
+                    isSpectating = true;
                 }
             }
         }
@@ -179,13 +179,13 @@ public class PlayerMovement : MonoBehaviour, IShootAble
 
     public void RecieveHit(RaycastHit2D hit, int damage)
     {
-        Debug.Log("recieved hit");
+        //Debug.Log("recieved hit");
         view.RPC("TakeDamage", RpcTarget.All, damage);
     }
 
     public void takeDmg(int damage)
     {
-        Debug.Log("take dmg called");
+        //Debug.Log("take dmg called");
         view.RPC("TakeDamage", RpcTarget.All, damage);
     }
 
@@ -194,13 +194,17 @@ public class PlayerMovement : MonoBehaviour, IShootAble
     {
         if (view.IsMine)
         {
-            Debug.Log("took damage");
+            //Debug.Log("took damage");
             health -= damage;
 
             healthBarScript.adjustSlider(health);
 
             if (health <= 0 && !isDead)
             {
+                game.createPlayerLists();
+                
+                Cursor.visible = true;
+                reticle.SetActive(false);
                 // player lists currently bugged
 
                 isDead = true;
@@ -218,24 +222,29 @@ public class PlayerMovement : MonoBehaviour, IShootAble
 
     public void startSpectating()
     {
+        //game.prepActiveList();
+
         Instantiate(spectateCam, new UnityEngine.Vector3(-5.5f, 0.5f, -12f), quaternion.identity);
-        cameraHolder.SetActive(false);
-        Cursor.visible = true;
-        reticle.SetActive(false);
+        gameObject.SetActive(false);
+        //cameraHolder.SetActive(false);
 
         if (isDef) {
             defaultCamScript.allLightsOn();
         }
 
         if (isDef) {
-            Debug.Log(game.defAlive.Count + " def alive");
+            //Debug.Log(game.defAlive.Count + " def alive");
+            //Debug.Log(game.defPlayerList.Count + " def player list");
             foreach (GameObject player in game.defAlive) {
+                //Debug.Log();
                 player.transform.GetChild(3).gameObject.SetActive(true);
+                player.transform.GetChild(4).gameObject.SetActive(true);
             }
         }
         else {
             foreach (GameObject player in game.atkAlive) {
                 player.transform.GetChild(3).gameObject.SetActive(true);
+                player.transform.GetChild(4).gameObject.SetActive(true);
             }
         }
     }

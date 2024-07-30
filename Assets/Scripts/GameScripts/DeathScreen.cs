@@ -29,7 +29,7 @@ public class DeathScreen : MonoBehaviour
         if (canCount && counter >= 0)
         {
             counter -= Time.deltaTime;
-            Debug.Log("counting down");
+            //Debug.Log("counting down");
             timerText.text = counter.ToString();
         }
         else if (counter <= 0)

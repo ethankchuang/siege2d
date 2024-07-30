@@ -169,7 +169,7 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
         {
             ListedPlayerScript newPlayer;
             Debug.Log(player.Key + " player key");
-            if (player.Key % 2 == 1)
+            if (player.Key % 2 == 0)
             {
                 newPlayer = Instantiate(listedPlayerPrefab, attackList);
                 atkPlayerList.Add(newPlayer);
