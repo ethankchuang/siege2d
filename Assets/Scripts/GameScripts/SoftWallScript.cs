@@ -71,14 +71,15 @@ public class SoftWallScript : MonoBehaviour
         }
         Debug.Log("tile at current pos? after");
         Debug.Log(tilemap.GetTile(tileCord) == null);*/
-        
+
+        //Debug.Log("soft wall recieve hit");
         view.RPC("takeDmg", RpcTarget.All, hit.point.x - (hit.normal.x * 0.01f), hit.point.y - (hit.normal.y * 0.01f));
     }
 
     [PunRPC]
     public void takeDmg(float x, float y)
     {
-        //Debug.Log("take dmg called " + tilemap.GetTile(tilemap.WorldToCell(new Vector2 (x, y))) == null);
+        //Debug.Log("take dmg called " + tilemap.GetTile(tilemap.WorldToCell(new Vector2 (x, y))) == null); 
         Vector3Int tilePos = tilemap.WorldToCell(new Vector2 (x, y));
 
         tilemap.SetTile(tilePos, null);

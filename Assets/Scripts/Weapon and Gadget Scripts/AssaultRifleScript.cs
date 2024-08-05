@@ -59,25 +59,23 @@ public class AssaultRifleScript : MonoBehaviour, IWeaponScript
 
             var trailScript = trail.GetComponent<BulletTrailScript>();
 
-            if (hit.collider != null)
-            {
+            if (hit.collider != null) {
                 trailScript.SetTargetPosition(hit.point);
                 var hittable = hit.collider.GetComponent<IShootAble>();
-                if (hittable != null)
-                {
+                if (hittable != null) {
                     hittable.RecieveHit(hit, damage);
-                }
-                else
-                {
-                    var hitBarricade = hit.collider.GetComponent<BarricadeScript>();
-                    if (hitBarricade != null)
-                    {
-                        hitBarricade.RecieveHit(hit.point, firePoint.transform.position.x, firePoint.transform.position.y);
+                } else {
+                    hittable = hit.collider.transform.parent.GetComponent<IShootAble>();
+                    if (hittable != null) {
+                        hittable.RecieveHit(hit, damage);
+                    } else {
+                        var hitBarricade = hit.collider.GetComponent<BarricadeScript>();
+                        if (hitBarricade != null) {
+                            hitBarricade.RecieveHit(hit.point, firePoint.transform.position.x, firePoint.transform.position.y);
+                        }
                     }
                 }
-            }
-            else
-            {
+            } else {
                 var endPosition = firePoint.position + firePoint.transform.up * weaponRange;
                 trailScript.SetTargetPosition(endPosition);
             }

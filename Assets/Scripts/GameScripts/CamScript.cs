@@ -33,9 +33,9 @@ public class CamScript : MonoBehaviour, IShootAble
       
     public void RecieveHit(RaycastHit2D hit, int damage)
     {
-        Debug.Log(hit + " hit");
-        Debug.Log(damage + " damage");
-        Debug.Log(view + " view");
+        //Debug.Log(hit + " hit");
+        //Debug.Log(damage + " damage");
+        //Debug.Log(view + " view");
 
         view.RPC(nameof(TakeDamage), RpcTarget.All, damage);
     }

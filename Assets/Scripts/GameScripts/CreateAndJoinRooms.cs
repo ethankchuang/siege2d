@@ -40,6 +40,7 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
         {
             PhotonNetwork.CreateRoom(createInput.text, new RoomOptions() { BroadcastPropsChangeToAll = true});
         }
+        PhotonNetwork.AutomaticallySyncScene = true;
     }
 
     public void Update()
@@ -53,6 +54,15 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
 
     public void OnClickPlay()
     {
+        /*for (int i = 0; i < tempList.Count; i++)
+        {
+            if (tempList[i].Name == PhotonNetwork.CurrentRoom.Name)
+            {
+                Debug.Log("tempList name and current room name are equal");
+                tempList.RemoveAt(i);
+                break;
+            }
+        }*/
         PhotonNetwork.LoadLevel("Game");
     }
 
@@ -67,22 +77,22 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        Debug.Log("on room list update called");
+        //Debug.Log("on room list update called");
         if (Time.time >= nextUpdateTime)
         {
             nextUpdateTime = Time.time + timeBetweenUpdate;
        
             if (roomList.Count == 0)
             {
-                Debug.Log("room list empty");
+                //Debug.Log("room list empty");
                 tempList.Clear();
             } else{
                 foreach (RoomInfo helpMe in roomList)
                 {
-                    Debug.Log(" ASIODUHAWHJKDKJHADLHKJSAKDHJAKHLJDAKLHJDAHKJLSD");
-                    Debug.Log(helpMe.Name + " name      ");
-                    Debug.Log(helpMe.RemovedFromList + " removed from list");
-                    Debug.Log(helpMe.PlayerCount + " count");
+                    //Debug.Log(" ASIODUHAWHJKDKJHADLHKJSAKDHJAKHLJDAKLHJDAHKJLSD");
+                    //Debug.Log(helpMe.Name + " name      ");
+                    //Debug.Log(helpMe.RemovedFromList + " removed from list");
+                    //Debug.Log(helpMe.PlayerCount + " count");
                     if (helpMe.PlayerCount == 0 || helpMe.RemovedFromList)
                     {
                         tempList.Remove(helpMe);
@@ -116,7 +126,8 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
 
     public void joinRoom(string rN)
     {
-        Debug.Log("joinRoom called");
+        //Debug.Log("joinRoom called");
+        PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.JoinRoom(rN);
     }
 
@@ -124,12 +135,12 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
     {     
         if (PhotonNetwork.CurrentRoom.PlayerCount <= 0)
         {
-            Debug.Log("current room player count less than 0");
+            //Debug.Log("current room player count less than 0");
             for (int i = 0; i < tempList.Count; i++)
             {
                 if (tempList[i].Name == PhotonNetwork.CurrentRoom.Name)
                 {
-                    Debug.Log("tempList name and current room name are equal");
+                    //Debug.Log("tempList name and current room name are equal");
                     tempList.RemoveAt(i);
                     break;
                 }
@@ -168,7 +179,7 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
         foreach (KeyValuePair<int, Player> player in PhotonNetwork.CurrentRoom.Players)
         {
             ListedPlayerScript newPlayer;
-            Debug.Log(player.Key + " player key");
+            //Debug.Log(player.Key + " player key");
             if (player.Key % 2 == 0)
             {
                 newPlayer = Instantiate(listedPlayerPrefab, attackList);

@@ -58,7 +58,15 @@ public class DefaultCamScript : MonoBehaviour
             cam.transform.GetChild(0).gameObject.SetActive(false);
         }
     }
-
+    public void allLightsOff()
+    {
+        foreach (GameObject cam in camList)
+        {
+            cam.gameObject.SetActive(false);
+            cam.transform.parent.gameObject.GetComponent<CamScript>().lightOff();
+            cam.transform.GetChild(0).gameObject.SetActive(false);
+        }
+    }
     public void exitCam(GameObject playerCam)
     {
         currentCam.transform.parent.gameObject.GetComponent<CamScript>().lightOff();

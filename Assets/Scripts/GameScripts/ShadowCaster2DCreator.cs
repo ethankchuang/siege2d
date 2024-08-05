@@ -75,7 +75,7 @@ public class ShadowCaster2DCreator : MonoBehaviour
 	}
 	public void DestroyOldShadowCasters()
 	{
-		Debug.Log("destroying old shadow casters");
+		//Debug.Log("destroying old shadow casters");
 		var tempList = transform.Cast<Transform>().ToList();
 		foreach (var child in tempList)
 		{

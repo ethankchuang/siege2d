@@ -14,7 +14,8 @@ public class NewTimer : MonoBehaviour
     double startTime;
     int minutes;
     int seconds;
-    [SerializeField] double timer;
+    [SerializeField] double RoundTimer;
+    double timer;
     [SerializeField] double defuseTimer;
     [SerializeField] TextMeshProUGUI timerText;
     [SerializeField] TextMeshProUGUI bombPlantedText;
@@ -23,9 +24,12 @@ public class NewTimer : MonoBehaviour
     // temp
     int waitCounter = 0;
     bool stopWaiting = true;
+    bool bombDown;
 
     public void Start()
     {
+        bombDown = false;
+        timer = RoundTimer;
         if (PhotonNetwork.LocalPlayer.IsMasterClient)
         {
             CustomeValue = new ExitGames.Client.Photon.Hashtable();
@@ -33,7 +37,7 @@ public class NewTimer : MonoBehaviour
             startTimer = true;
             CustomeValue.Add("StartTime", startTime);
             PhotonNetwork.CurrentRoom.SetCustomProperties(CustomeValue);
-            Debug.Log("timer started");
+            //Debug.Log("timer started");
         }
         else
         {
@@ -50,6 +54,7 @@ public class NewTimer : MonoBehaviour
             waitCounter --;
             if (waitCounter <= 0)
             {
+                // slave client error here
                 startTime = double.Parse(PhotonNetwork.CurrentRoom.CustomProperties["StartTime"].ToString());
                 startTimer = true;
             }
@@ -69,6 +74,8 @@ public class NewTimer : MonoBehaviour
         if (timerIncrementValue <= 0)
         {
             Debug.Log("game over");
+            Game game = GameObject.Find("Game").GetComponent<Game>();
+            game.endRound(!bombDown);
             startTimer = false;
         }
     }
@@ -78,5 +85,14 @@ public class NewTimer : MonoBehaviour
         startTime = PhotonNetwork.Time;
         timer = defuseTimer;
         bombPlantedText.SetText("bomb planted");
+        bombDown = true;
+    }
+
+    public void restartTimer() {
+        Debug.Log("restartTimer called");
+        startTime = PhotonNetwork.Time;
+        timer = RoundTimer;
+        bombPlantedText.SetText("Plant the Bomb");
+        bombDown = false;
     }
 }

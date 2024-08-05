@@ -21,7 +21,7 @@ public class ListedPlayerScript : MonoBehaviourPunCallbacks
     public void setIsDef(bool value)
     {
         playerProperties["isDef"] = value;
-        Debug.Log(playerProperties["isDef"] + " is def");
+        //Debug.Log(playerProperties["isDef"] + " is def");
         PhotonNetwork.SetPlayerCustomProperties(playerProperties);
     }
 
