@@ -19,7 +19,7 @@ public class FlashbangScript : MonoBehaviour, ISecondaryGadget
     public void explode()
     {
         Debug.Log("grenade pos " + grenadeInstance.transform.position);
-        hitColliders = new Collider2D[10];
+        hitColliders = new Collider2D[20];
 
         //get all gameobjects in each radius
         Physics2D.OverlapCircle(grenadeInstance.transform.position, dmgRadius, noFilter.NoFilter(), hitColliders);
@@ -29,7 +29,7 @@ public class FlashbangScript : MonoBehaviour, ISecondaryGadget
         {
             if (hitCollider && hitCollider.CompareTag("Player"))
             {
-                var player = hitCollider.GetComponent<PlayerMovement>();    
+                var player = hitCollider.transform.parent.GetComponent<PlayerMovement>();    
 
                 Debug.Log("found player");
                 var closestPoint = hitCollider.ClosestPoint(grenadeInstance.transform.position);
@@ -37,7 +37,7 @@ public class FlashbangScript : MonoBehaviour, ISecondaryGadget
                 var percent = Mathf.InverseLerp(dmgRadius, 0, distance);
 
                 targetLight = player.gameObject.transform.Find("Spot Light 2D").GetComponent<Light2D>();
-                targetLight.intensity = maxBrightness * percent;
+                targetLight.intensity = (maxBrightness * percent) + 1;
                 
                 //targetLight.pointLightOuterAngle = 360;
                 //targetLight.pointLightInnerAngle = 180;

@@ -33,7 +33,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
     bool isDisarming = false;
 
     // weapon serialize field for testing
-    [SerializeField] private GameObject currentWeapon;
+    private GameObject currentWeapon;
     private IWeaponScript currentWeaponScript;
     float lightOuterAngle;
     float lightInnerAngle;
@@ -59,18 +59,28 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
     bool temp = true;
     private bool isSpectating;
     public string nickName;
-
-
+    SecondaryGadgetScript secondaryGadgetScript;
+    public bool hasWeapon;
+    public bool hasGadget;
+    GameObject loadoutSelect;
+    bool inPrepPhase;
     public void Start()
     {
         view = GetComponent<PhotonView>();
+        loadoutSelect = GameObject.Find("Canvas").transform.Find("LoadoutSelect").gameObject;
         if (view.IsMine)
         {
             spotLight2D.SetActive(true);
             selfSprite.SetActive(true);
             shadowSprite.SetActive(false);
-            nickName = PhotonNetwork.LocalPlayer.NickName;
+            nickName = PhotonNetwork.LocalPlayer.NickName;    
+            loadoutSelect.GetComponent<LoadoutSelect>().setMyPlayer(gameObject);
         }
+        secondaryGadgetScript = GetComponent<SecondaryGadgetScript>();
+        //secondaryGadgetScript.setCurrentGadget(flashBang.GetComponent<FlashbangScript>());
+        //currentWeaponScript = currentWeapon.GetComponent<IWeaponScript>();
+        //currentWeaponScript.onStart();
+
         health = MaxHealth;
         isDef = gameObject.GetComponent<PlaceDefuser>() == null;
         defaultCamScript = GameObject.Find("DefaultCameras").GetComponent<DefaultCamScript>();
@@ -78,12 +88,8 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
         healthBarScript = healthBar.GetComponent<HealthBarScript>();
         healthBarScript.setSliderMax(health);
         // testing secondary gadgets
-        SecondaryGadgetScript secondaryGadgetScript = GetComponent<SecondaryGadgetScript>();
-        secondaryGadgetScript.setCurrentGadget(flashBang.GetComponent<FlashbangScript>());
         lightOuterAngle = spotLight2D.GetComponent<Light2D>().pointLightOuterAngle;
         lightInnerAngle = spotLight2D.GetComponent<Light2D>().pointLightInnerAngle;
-        currentWeaponScript = currentWeapon.GetComponent<IWeaponScript>();
-        currentWeaponScript.onStart();
         deathScreen = GameObject.Find("Canvas").transform.Find("DeathBG").GetComponent<DeathScreen>();
         roundWinScreen = GameObject.Find("Canvas").transform.Find("WinRoundBG").GetComponent<WinRound>();
         roundLossScreen = GameObject.Find("Canvas").transform.Find("LoseRoundBG").GetComponent<LoseRound>();
@@ -93,9 +99,9 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
         //Debug.Log((game == null) + " game = null");
         spectateCam = GameObject.Find("SpectatingCam").transform.GetChild(0).gameObject;
         reticle = GameObject.Find("reticle");
-        Cursor.visible = false;
         isSpectating = false;
         gameTimer = GameObject.Find("Canvas").GetComponent<NewTimer>();
+        inPrepPhase = true;
     }
 
     public void Update()
@@ -104,6 +110,33 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
         {
             if (!isDead)
             {
+                if (inPrepPhase && gameTimer.inPrep) {
+                    Debug.Log(hasGadget + " has gadget" + " from " + nickName);
+                    Debug.Log(hasWeapon + " has weapon" + " from " + nickName);
+                    if (!hasGadget || !hasWeapon) {
+
+                        loadoutSelect.SetActive(true);
+                        Cursor.visible = true;
+                    } else {
+                        Debug.Log("has gadget and has weapon, ending prep phase");
+                        loadoutSelect.SetActive(false);
+                        inPrepPhase = false;
+                        Cursor.visible = false;
+                    }
+                } else if (inPrepPhase && !(hasGadget && hasWeapon)) {
+                    if (!hasGadget) {
+                        Debug.Log("giving flashbang default");
+                        changeGadget(flashBang.GetComponent<FlashbangScript>());
+                    }
+                    if (!hasWeapon) {
+                        Debug.Log("giving assault rifle default");
+                        changeWeapon(GameObject.Find("AssaultRifle"));
+                    }
+                    inPrepPhase = false;
+                    loadoutSelect.SetActive(false);
+                    Cursor.visible = false;
+                }
+
                 movement.x = Input.GetAxisRaw("Horizontal");
                 movement.y = Input.GetAxisRaw("Vertical");
                 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
@@ -112,15 +145,19 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
                 //sprinting
                 if (Input.GetKey(KeyCode.LeftShift)) moveSpeed = sprintSpeed;
                 else moveSpeed = walkSpeed;
-                if (Input.GetButton("Fire1")) {
-                    currentWeaponScript.shoot(transform.Find("FirePoint"), GetComponent<AudioSource>());
-                } if (Input.GetKeyDown("r")) {
-                    currentWeaponScript.reload(GetComponent<AudioSource>());
-                } if (Input.GetButtonDown("Fire2")) {
-                    currentWeaponScript.aimDownSight(spotLight2D.GetComponent<Light2D>());
-                } if (Input.GetButtonUp("Fire2")) {
-                    currentWeaponScript.hipFire(spotLight2D.GetComponent<Light2D>(), lightInnerAngle, lightOuterAngle);
+
+                if (hasWeapon) {
+                    if (Input.GetButton("Fire1")) {
+                        currentWeaponScript.shoot(transform.Find("FirePoint"), GetComponent<AudioSource>());
+                    } if (Input.GetKeyDown("r")) {
+                        currentWeaponScript.reload(GetComponent<AudioSource>());
+                    } if (Input.GetButtonDown("Fire2")) {
+                        currentWeaponScript.aimDownSight(spotLight2D.GetComponent<Light2D>());
+                    } if (Input.GetButtonUp("Fire2")) {
+                        currentWeaponScript.hipFire(spotLight2D.GetComponent<Light2D>(), lightInnerAngle, lightOuterAngle);
+                    }
                 }
+
                 if (Input.GetKeyDown("5") && !isWatchingCam) {
                     defaultCamScript.openCam(cameraHolder);
                     playerLocked = true;
@@ -154,6 +191,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
                 roundLossScreen.resetTimer();
                 roundWinScreen.gameObject.SetActive(false);
                 roundLossScreen.gameObject.SetActive(false);
+                game.canEndRound = true;
             } else if (temp && (gameWinScreen.doneCounting || gameLoseScreen.doneCounting)) {
                 temp = false;
                 //Destroy(gameObject);
@@ -166,18 +204,18 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
             }
         }
     }
-    /*public void LeaveRoom()
-    {
-        PhotonNetwork.LeaveRoom();
+    public void changeWeapon(GameObject weapon) {
+        currentWeapon = weapon;
+        currentWeaponScript = weapon.GetComponent<IWeaponScript>();
+        currentWeaponScript.onStart();
+        hasWeapon = true;
+        Debug.Log("changing weapon " + hasWeapon + " from " + nickName);
     }
-
-    public override void OnLeftRoom()
-    {
-        SceneManager.LoadScene("Lobby");
-
-        base.OnLeftRoom();
-    }*/
-
+    public void changeGadget(ISecondaryGadget gadget) {
+        secondaryGadgetScript.setCurrentGadget(gadget);
+        hasGadget = true;
+        Debug.Log("changing gadget " + hasGadget + " from " + nickName);
+    }
     public void FixedUpdate()
     {
         if (view.IsMine && !playerLocked && !isDead)
@@ -212,37 +250,36 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
             //Debug.Log(health + " health");  
         }
 
-        if (health <= 0) {
-            transform.GetChild(4).gameObject.SetActive(false);
-            transform.GetChild(5).gameObject.SetActive(false);
-            transform.GetChild(6).gameObject.SetActive(false);
-            isDead = true;
-            if (view.IsMine) {
-                //if (!isDead) {
-                game.setAliveLists(gameObject);
-                Cursor.visible = true;
-                reticle.SetActive(false);
-                if (!(game.defAlive.Count <= 0 || game.atkAlive.Count <= 0)) {
-                    //maybe wait a couple seconds after death screen or smth
-                    //Debug.Log("game not over");
-                    deathScreen.gameObject.SetActive(true);
-                    deathScreen.startTimer();
-                    transform.GetChild(3).gameObject.SetActive(false);
-                }
-                //}
-            } else {
-                //gameObject.SetActive(false);  
-                game.setAliveLists(null);
+        if (health <= 0 && view.IsMine) {
+
+            game.setAliveLists(gameObject);
+            Cursor.visible = true;
+            reticle.SetActive(false);
+            if (!(game.defAlive.Count <= 0 || game.atkAlive.Count <= 0)) {
+                //maybe wait a couple seconds after death screen or smth
+                //Debug.Log("game not over");
+                deathScreen.gameObject.SetActive(true);
+                deathScreen.startTimer();
+                transform.GetChild(3).gameObject.SetActive(false);
             }
 
             if (game.defAlive.Count <= 0) {
                 Debug.Log("atk won round");
-                game.endRound(false);
+                game.endRoundHelper(false);
             } else if (game.atkAlive.Count <= 0) {
                 Debug.Log("def won round");
-                game.endRound(true);
+                game.endRoundHelper(true);
             }
         }
+    }
+
+    [PunRPC]
+    public void playerDied() {
+        transform.GetChild(4).gameObject.SetActive(false);
+        transform.GetChild(5).gameObject.SetActive(false);
+        transform.GetChild(6).gameObject.SetActive(false);
+        isDead = true;
+        game.setAliveLists(null);
     }
 
     public void roundEndScreen(bool win)
@@ -349,6 +386,9 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
 
         
         isDead = false;
+        hasWeapon = false;
+        hasGadget = false;
+        inPrepPhase = true;
         spectateCam.SetActive(false);
         roundLossScreen.gameObject.SetActive(false);
         roundWinScreen.gameObject.SetActive(false);

@@ -684,13 +684,14 @@ MonoBehaviour:
   cam: {fileID: 6617082074529581125}
   spotLight2D: {fileID: 3185771916694706259}
   cameraHolder: {fileID: 5306510842492554948}
-  currentWeapon: {fileID: 7711750003809712542, guid: db12ea02d5734a34ab037d7e674a06a8, type: 3}
   isDead: 0
   isDef: 0
   flashBang: {fileID: 7081160779873467669, guid: 8cb06eb23f8bcde4f8a718976b35351a, type: 3}
   selfSprite: {fileID: 7733809616811643011}
   shadowSprite: {fileID: 3791494220575711025}
   nickName: 
+  hasWeapon: 0
+  hasGadget: 0
 --- !u!114 &6735376421044562467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -965,7 +966,7 @@ GameObject:
   - component: {fileID: 6354988927106818517}
   m_Layer: 0
   m_Name: PlayerBody
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

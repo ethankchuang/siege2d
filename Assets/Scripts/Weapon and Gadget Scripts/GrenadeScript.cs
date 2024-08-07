@@ -26,7 +26,7 @@ public class GrenadeScript : MonoBehaviour, ISecondaryGadget
         {
             if (hitCollider && hitCollider.CompareTag("Player"))
             {
-                var player = hitCollider.GetComponent<PlayerMovement>();    
+                var player = hitCollider.transform.parent.GetComponent<PlayerMovement>();    
 
                 Debug.Log("found player");
                 var closestPoint = hitCollider.ClosestPoint(grenadeInstance.transform.position);

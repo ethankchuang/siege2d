@@ -33,33 +33,35 @@ public class SecondaryGadgetScript : MonoBehaviour
         //Debug.Log(currentGadgetScript.readyToActivate());
         if (view.IsMine)
         {
-            if (Input.GetKey("g"))
-            {
-                //Debug.Log("g key is down");
-                strength += Time.deltaTime;
-            }
-            if (Input.GetKeyUp("g"))
-            {
-                //Debug.Log("strenght = " + strength);
-                if (strength >= 5) {strength = 5;}
-
-                //Debug.Log("g key is up");
-                //currentGadgetScript.throwGadget(strength, gameObject);
-                view.RPC(nameof(throwGadget), RpcTarget.All, strength);
-                strength = 0;
-            }
-
-            //flashbang wear off 
-
-            if (myLight2D.intensity > 1)
-            {
-                myLight2D.intensity -= Time.deltaTime;
-                /*if (myLight2D.intensity <= 1)
+            if (gameObject.GetComponent<PlayerMovement>().hasGadget) {
+                if (Input.GetKey("g"))
                 {
-                    myLight2D.intensity = 1;
-                    //myLight2D.pointLightOuterAngle = 180;
-                    myLight2D.pointLightInnerAngle = 145;
-                }*/
+                    //Debug.Log("g key is down");
+                    strength += Time.deltaTime;
+                }
+                if (Input.GetKeyUp("g"))
+                {
+                    //Debug.Log("strenght = " + strength);
+                    if (strength >= 5) {strength = 5;}
+
+                    //Debug.Log("g key is up");
+                    //currentGadgetScript.throwGadget(strength, gameObject);
+                    view.RPC(nameof(throwGadget), RpcTarget.All, strength);
+                    strength = 0;
+                }
+
+                //flashbang wear off 
+
+                if (myLight2D.intensity > 1)
+                {
+                    myLight2D.intensity -= Time.deltaTime;
+                    /*if (myLight2D.intensity <= 1)
+                    {
+                        myLight2D.intensity = 1;
+                        //myLight2D.pointLightOuterAngle = 180;
+                        myLight2D.pointLightInnerAngle = 145;
+                    }*/
+                }
             }
         }
     }

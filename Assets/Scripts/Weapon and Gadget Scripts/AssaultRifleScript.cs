@@ -16,6 +16,9 @@ public class AssaultRifleScript : MonoBehaviour, IWeaponScript
     [SerializeField]private int adsInnerAngle;
     [SerializeField]private int adsOuterAngle;
     [SerializeField]private int damage;
+    [SerializeField]private AudioClip shotSoundClip;
+    [SerializeField]private AudioClip reloadSoundClip;
+    private Transform muzzleFlash;
     bool firing = false;
     bool reloading = false;
     bool canShoot = true;
@@ -32,6 +35,15 @@ public class AssaultRifleScript : MonoBehaviour, IWeaponScript
         //Debug.Log("shoot called " + canShoot + " ca n shoot " + currentAmmo + " current ammo");
         if (canShoot && currentAmmo > 0)
         {
+            audioSource.clip = shotSoundClip;
+            audioSource.Play();
+
+            int rand = UnityEngine.Random.Range(0, 3);
+            muzzleFlash = firePoint.GetChild(0).GetChild(rand);
+            muzzleFlash.gameObject.SetActive(true);
+            Animator muzzle = firePoint.GetChild(0).GetComponent<Animator>();
+            muzzle.SetTrigger("Shoot");
+
             if (isADS)
             {
                 spr = new Vector3(0, 0, Random.Range(-adsSpread, adsSpread));
@@ -68,7 +80,7 @@ public class AssaultRifleScript : MonoBehaviour, IWeaponScript
                     hittable = hit.collider.transform.parent.GetComponent<IShootAble>();
                     if (hittable != null) {
                         hittable.RecieveHit(hit, damage);
-                    } else {
+                    } else if (hit.collider.GetComponent<BarricadeScript>() != null) {
                         var hitBarricade = hit.collider.GetComponent<BarricadeScript>();
                         if (hitBarricade != null) {
                             hitBarricade.RecieveHit(hit.point, firePoint.transform.position.x, firePoint.transform.position.y);
@@ -88,6 +100,7 @@ public class AssaultRifleScript : MonoBehaviour, IWeaponScript
     private void ShootingHelper()
     {
         canShoot = true;
+        muzzleFlash.gameObject.SetActive(false);
     }
 
     public void reload(AudioSource audioSource)
@@ -96,7 +109,8 @@ public class AssaultRifleScript : MonoBehaviour, IWeaponScript
         {
             Invoke(nameof(reloadHelper), reloadTime);
             reloading = true;
-            
+            audioSource.clip = reloadSoundClip;
+            audioSource.Play();
         }
     }
 

@@ -49,7 +49,7 @@ public class DefuserScript : MonoBehaviour
             // implement later
             Debug.Log("bomb defused, defense wins");
             Game game = GameObject.Find("Game").GetComponent<Game>();
-            game.endRound(true);
+            game.endRoundHelper(true);
         }
 
         beingDefused = true;

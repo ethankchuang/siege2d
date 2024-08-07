@@ -18,6 +18,7 @@ public class Game : MonoBehaviour
     public int PointsToWin;
     private PhotonView view;
     [SerializeField] GameObject tileMap;
+    public bool canEndRound;
 
     public void Start()
     {
@@ -29,6 +30,7 @@ public class Game : MonoBehaviour
         atkPoints = 0;
         view = GetComponent<PhotonView>();
         createPlayerLists();
+        canEndRound = true;
     }
 
     public void setAliveLists(GameObject deadPlayer) 
@@ -84,12 +86,19 @@ public class Game : MonoBehaviour
         //prepActiveList();
     }
 
-    
+    public void endRoundHelper(bool defWin) {
+
+        if (!canEndRound) { return; }
+        canEndRound = false;
+
+        view.RPC(nameof(endRound), RpcTarget.All, defWin);
+    }
+
+    [PunRPC]
     public void endRound(bool defWin)
     {
         Debug.Log("end round called!?");
-        if (defWin) 
-        {
+        if (defWin) {
             defPoints ++;
             Debug.Log(defPoints + " def points " + PointsToWin + " points to win");
             if (defPoints >= PointsToWin) {
@@ -97,9 +106,7 @@ public class Game : MonoBehaviour
                 endGame(true);
                 return;
             }
-        }
-        else
-        {
+        } else {
             atkPoints ++;
             Debug.Log(atkPoints + " atk points " + PointsToWin + " points to win");
             if (atkPoints >= PointsToWin) {
@@ -123,6 +130,7 @@ public class Game : MonoBehaviour
                 player.GetComponent<PlayerMovement>().roundEndScreen(!defWin);
             }
         }
+
     } 
 
     public void resetMap()

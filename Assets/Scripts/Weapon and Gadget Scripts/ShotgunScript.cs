@@ -81,7 +81,7 @@ public class ShotgunScript : MonoBehaviour, IWeaponScript
 
                 var trailScript = trail.GetComponent<BulletTrailScript>();
 
-                if (hit.collider != null) {
+                if (hit.collider != null && hit.collider.GetComponent<ISecondaryGadget>() == null) {
                     trailScript.SetTargetPosition(hit.point);
                     var hittable = hit.collider.GetComponent<IShootAble>();
                     if (hittable != null) {
