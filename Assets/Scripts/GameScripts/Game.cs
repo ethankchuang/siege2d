@@ -91,6 +91,7 @@ public class Game : MonoBehaviour
     }
     [PunRPC]
     public void endRoundHelperHelper(bool defWin) {
+        Debug.Log(canEndRound + " can end round?");
 
         if (!canEndRound) { return; }
         canEndRound = false;
