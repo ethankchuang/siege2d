@@ -85,16 +85,21 @@ public class Game : MonoBehaviour
         //Debug.Log("atk count " + atkPlayerList.Count);
         //prepActiveList();
     }
-
+    
     public void endRoundHelper(bool defWin) {
+        view.RPC(nameof(endRoundHelperHelper), RpcTarget.All, defWin);
+    }
+    [PunRPC]
+    public void endRoundHelperHelper(bool defWin) {
 
         if (!canEndRound) { return; }
         canEndRound = false;
 
-        view.RPC(nameof(endRound), RpcTarget.All, defWin);
+        //view.RPC(nameof(endRound), RpcTarget.All, defWin);
+        endRound(defWin);
     }
 
-    [PunRPC]
+    //[PunRPC]
     public void endRound(bool defWin)
     {
         Debug.Log("end round called!?");

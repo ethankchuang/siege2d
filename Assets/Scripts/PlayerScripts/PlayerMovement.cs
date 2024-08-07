@@ -111,8 +111,8 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
             if (!isDead)
             {
                 if (inPrepPhase && gameTimer.inPrep) {
-                    Debug.Log(hasGadget + " has gadget" + " from " + nickName);
-                    Debug.Log(hasWeapon + " has weapon" + " from " + nickName);
+                    //Debug.Log(hasGadget + " has gadget" + " from " + nickName);
+                    //Debug.Log(hasWeapon + " has weapon" + " from " + nickName);
                     if (!hasGadget || !hasWeapon) {
 
                         loadoutSelect.SetActive(true);
