@@ -80,10 +80,15 @@ public class AssaultRifleScript : MonoBehaviour, IWeaponScript
                     hittable = hit.collider.transform.parent.GetComponent<IShootAble>();
                     if (hittable != null) {
                         hittable.RecieveHit(hit, damage);
-                    } else if (hit.collider.GetComponent<BarricadeScript>() != null) {
-                        var hitBarricade = hit.collider.GetComponent<BarricadeScript>();
-                        if (hitBarricade != null) {
-                            hitBarricade.RecieveHit(hit.point, firePoint.transform.position.x, firePoint.transform.position.y);
+                    } else {
+                        hittable = hit.collider.transform.parent.parent.GetComponent<IShootAble>();
+                        if (hittable != null) {
+                            hittable.RecieveHit(hit, damage);
+                        } else if (hit.collider.GetComponent<BarricadeScript>() != null) {
+                            var hitBarricade = hit.collider.GetComponent<BarricadeScript>();
+                            if (hitBarricade != null) {
+                                hitBarricade.RecieveHit(hit.point, firePoint.transform.position.x, firePoint.transform.position.y);
+                            }
                         }
                     }
                 }

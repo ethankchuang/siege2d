@@ -55,7 +55,7 @@ public class FlashbangScript : MonoBehaviour, ISecondaryGadget
     public void throwGadget(float force, GameObject player)
     {
 
-        Transform firePoint = player.transform.Find("FirePoint");
+        Transform firePoint = player.transform.GetChild(2).Find("FirePoint");
 
         grenadeInstance = Instantiate(gameObject, firePoint.position, firePoint.rotation);
         //grenadeInstance = PhotonNetwork.Instantiate(gameObject.name, firePoint.position, firePoint.rotation);

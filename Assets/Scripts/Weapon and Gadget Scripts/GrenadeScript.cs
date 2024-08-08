@@ -43,7 +43,7 @@ public class GrenadeScript : MonoBehaviour, ISecondaryGadget
 
     public void throwGadget(float force, GameObject player)
     {
-        Transform firePoint = player.transform.Find("FirePoint");
+        Transform firePoint = player.transform.GetChild(2).Find("FirePoint");
 
         grenadeInstance = Instantiate(gameObject, firePoint.position, firePoint.rotation);
         grenadeInstance.GetComponent<Rigidbody2D>().AddForce(firePoint.up * force, ForceMode2D.Impulse);

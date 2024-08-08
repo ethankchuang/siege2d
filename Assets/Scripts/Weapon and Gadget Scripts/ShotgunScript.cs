@@ -91,17 +91,22 @@ public class ShotgunScript : MonoBehaviour, IWeaponScript
                         hittable = hit.collider.transform.parent.gameObject.GetComponent<IShootAble>();
                         if (hittable != null) {
                             hittable.RecieveHit(hit, damage);
-                        } else if (hit.collider.GetComponent<BarricadeScript>()) {
-                            var hitBarricade = hit.collider.GetComponent<BarricadeScript>();
-                            if (hitBarricade != null) {
-                                hitBarricade.RecieveHit(hit.point, firePoint.transform.position.x, firePoint.transform.position.y);
+                        } else {
+                            hittable = hit.collider.transform.parent.parent.gameObject.GetComponent<IShootAble>();
+                            if (hittable != null) {
+                                hittable.RecieveHit(hit, damage);
+                            } else if (hit.collider.GetComponent<BarricadeScript>()) {
+                                var hitBarricade = hit.collider.GetComponent<BarricadeScript>();
+                                if (hitBarricade != null) {
+                                    hitBarricade.RecieveHit(hit.point, firePoint.transform.position.x, firePoint.transform.position.y);
+                                }
+                            } else if (hit.collider.GetComponent<SoftWallScript>()) {
+                                var hitSoftWall = hit.collider.GetComponent<SoftWallScript>();
+                                if (hitSoftWall != null) {
+                                    hitSoftWall.RecieveHitRaycast(hit, firePoint.transform.position.x, firePoint.transform.position.y);
+                                }
                             }
-                        } else if (hit.collider.GetComponent<SoftWallScript>()) {
-                            var hitSoftWall = hit.collider.GetComponent<SoftWallScript>();
-                            if (hitSoftWall != null) {
-                                hitSoftWall.RecieveHitRaycast(hit, firePoint.transform.position.x, firePoint.transform.position.y);
-                            }
-                        }
+                        } 
                     }
                 } else {
                     var endPosition = firePoint.position + firePoint.up * weaponRange;

@@ -36,7 +36,7 @@ public class BreachChargeScript : MonoBehaviour, ISecondaryGadget
 
     public void throwGadget(float force, GameObject player)
     {
-        Transform firePoint = player.transform.Find("FirePoint");
+        Transform firePoint = player.transform.GetChild(2).Find("FirePoint");
         
         Debug.Log("throw gadget called, force = " + force);
 
