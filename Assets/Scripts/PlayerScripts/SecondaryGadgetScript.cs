@@ -25,7 +25,7 @@ public class SecondaryGadgetScript : MonoBehaviour
     void Start()
     {
         view = GetComponent<PhotonView>();
-        myLight2D = gameObject.transform.Find("Spot Light 2D").GetComponent<Light2D>();
+        myLight2D = gameObject.transform.GetChild(2).Find("Spot Light 2D").GetComponent<Light2D>();
     }
 
     void Update()

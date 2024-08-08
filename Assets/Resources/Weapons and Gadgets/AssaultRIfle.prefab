@@ -47,8 +47,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletTrail: {fileID: 2035908627529607136, guid: ac4508bb1331ca14cb15de632a378cc7, type: 3}
   weaponRange: 100
-  hipSpread: 25
-  adsSpread: 3
+  hipSpread: 20
+  adsSpread: 2
   maxAmmo: 31
   timeBetweenShots: 0.15
   reloadTime: 3

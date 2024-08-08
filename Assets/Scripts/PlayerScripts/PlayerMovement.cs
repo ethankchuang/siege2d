@@ -148,7 +148,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
 
                 if (hasWeapon) {
                     if (Input.GetButton("Fire1")) {
-                        currentWeaponScript.shoot(transform.Find("FirePoint"), GetComponent<AudioSource>());
+                        currentWeaponScript.shoot(transform.GetChild(2).Find("FirePoint"), GetComponent<AudioSource>());
                     } if (Input.GetKeyDown("r")) {
                         currentWeaponScript.reload(GetComponent<AudioSource>());
                     } if (Input.GetButtonDown("Fire2")) {
@@ -157,7 +157,10 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
                         currentWeaponScript.hipFire(spotLight2D.GetComponent<Light2D>(), lightInnerAngle, lightOuterAngle);
                     }
                 }
+                if (Input.GetKeyDown("q") || Input.GetKeyDown("e")) {
+                    transform.GetChild(2).Rotate(0, 180, 0);
 
+                }
                 if (Input.GetKeyDown("5") && !isWatchingCam) {
                     defaultCamScript.openCam(cameraHolder);
                     playerLocked = true;
@@ -261,7 +264,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
                 //Debug.Log("game not over");
                 deathScreen.gameObject.SetActive(true);
                 deathScreen.startTimer();
-                transform.GetChild(3).gameObject.SetActive(false);
+                transform.GetChild(2).GetChild(0).gameObject.SetActive(false);
             }
 
             if (game.defAlive.Count <= 0) {
@@ -276,9 +279,9 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
 
     [PunRPC]
     public void playerDied() {
-        transform.GetChild(4).gameObject.SetActive(false);
-        transform.GetChild(5).gameObject.SetActive(false);
-        transform.GetChild(6).gameObject.SetActive(false);
+        transform.GetChild(2).gameObject.SetActive(false);
+        //transform.GetChild(5).gameObject.SetActive(false);
+        //transform.GetChild(6).gameObject.SetActive(false);
         isDead = true;
         game.setAliveLists(null);
     }
@@ -313,16 +316,16 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
             //Debug.Log(game.defPlayerList.Count + " def player list");
             foreach (GameObject player in game.defAlive) {
                 //Debug.Log();
-                player.transform.GetChild(3).gameObject.SetActive(true);
-                player.transform.GetChild(4).gameObject.SetActive(true);
-                player.transform.GetChild(5).gameObject.SetActive(false);
+                player.transform.GetChild(2).GetChild(0).gameObject.SetActive(true);
+                player.transform.GetChild(2).GetChild(3).gameObject.SetActive(true);
+                //player.transform.GetChild(5).gameObject.SetActive(false);
             }
         }
         else {
             foreach (GameObject player in game.atkAlive) {
-                player.transform.GetChild(3).gameObject.SetActive(true);
-                player.transform.GetChild(4).gameObject.SetActive(true);
-                player.transform.GetChild(5).gameObject.SetActive(false);
+                player.transform.GetChild(2).GetChild(0).gameObject.SetActive(true);
+                player.transform.GetChild(2).GetChild(3).gameObject.SetActive(true);
+                //player.transform.GetChild(5).gameObject.SetActive(false);
             }
         }
     }
@@ -351,33 +354,37 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
     public void resetPlayer()
     {
         if (view.IsMine) {
-            transform.GetChild(4).gameObject.SetActive(true);
-            transform.GetChild(3).gameObject.SetActive(true);
+            transform.GetChild(2).gameObject.SetActive(true);
+            transform.GetChild(2).GetChild(0).gameObject.SetActive(true);
+            transform.GetChild(2).GetChild(2).gameObject.SetActive(true);
+            transform.GetChild(2).GetChild(3).gameObject.SetActive(true);
             defaultCamScript.allLightsOff();
             foreach (GameObject player in game.defPlayerList) {
                 //Debug.Log("def player list count " + game.defPlayerList.Count);
                 if (player != gameObject)
                 {
-                    player.transform.GetChild(3).gameObject.SetActive(false);
-                    player.transform.GetChild(4).gameObject.SetActive(false);
-                    player.transform.GetChild(5).gameObject.SetActive(true);
-                    player.transform.GetChild(6).gameObject.SetActive(true);
+                    player.transform.GetChild(2).GetChild(0).gameObject.SetActive(false);
+                    player.transform.GetChild(2).GetChild(1).gameObject.SetActive(true);
+                    player.transform.GetChild(2).GetChild(2).gameObject.SetActive(true);
+                    player.transform.GetChild(2).GetChild(3).gameObject.SetActive(false);
                 }
             }
             foreach (GameObject player in game.atkPlayerList) {
                 //Debug.Log("atk player list count " + game.atkPlayerList.Count);
                 if (player != gameObject)
                 {
-                    player.transform.GetChild(3).gameObject.SetActive(false);
-                    player.transform.GetChild(4).gameObject.SetActive(false);
-                    player.transform.GetChild(5).gameObject.SetActive(true);
-                    player.transform.GetChild(6).gameObject.SetActive(true);
+                    player.transform.GetChild(2).GetChild(0).gameObject.SetActive(false);
+                    player.transform.GetChild(2).GetChild(1).gameObject.SetActive(true);
+                    player.transform.GetChild(2).GetChild(2).gameObject.SetActive(true);
+                    player.transform.GetChild(2).GetChild(3).gameObject.SetActive(false);
                 }
             }
         } else {
-            transform.GetChild(5).gameObject.SetActive(true);
+            transform.GetChild(2).GetChild(0).gameObject.SetActive(false);
+            transform.GetChild(2).GetChild(1).gameObject.SetActive(true);
+            transform.GetChild(2).GetChild(2).gameObject.SetActive(true);
+            transform.GetChild(2).GetChild(3).gameObject.SetActive(false);
         }
-        transform.GetChild(6).gameObject.SetActive(true);
 
         //Debug.Log("reset player called");
 
