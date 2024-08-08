@@ -191,7 +191,8 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
                 roundLossScreen.resetTimer();
                 roundWinScreen.gameObject.SetActive(false);
                 roundLossScreen.gameObject.SetActive(false);
-                game.canEndRound = true;
+                gameTimer.restartTimer();
+                
             } else if (temp && (gameWinScreen.doneCounting || gameLoseScreen.doneCounting)) {
                 temp = false;
                 //Destroy(gameObject);
@@ -383,12 +384,18 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
         // NEED TO FIX - other player sees health as 0 when they respawn!?
         //gameObject.GetComponent<PlayerMovement>().health = gameObject.GetComponent<PlayerMovement>().MaxHealth;
         view.RPC(nameof(setHealthMax), RpcTarget.All);
+        healthBarScript.adjustSlider(health);
 
-        
         isDead = false;
         hasWeapon = false;
         hasGadget = false;
         inPrepPhase = true;
+        hasGadget = false;
+        hasWeapon = false;
+        gameTimer.inPrep = true;
+        if (!isDef) {
+            gameObject.GetComponent<PlaceDefuser>().hasDefuser = true;
+        }
         spectateCam.SetActive(false);
         roundLossScreen.gameObject.SetActive(false);
         roundWinScreen.gameObject.SetActive(false);
@@ -401,7 +408,9 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
         SpawnPlayers spawnPlayers = game.gameObject.GetComponent<SpawnPlayers>();
         spawnPlayers.resetUsedLists();
         transform.position = spawnPlayers.respawn(gameObject);   
-        gameTimer.restartTimer();
+        
+        gameTimer.timeUpEndedRound = true;
+        game.canEndRound = true;
     }
 
     [PunRPC]

@@ -144,6 +144,8 @@ public class Game : MonoBehaviour
         //Debug.Log("reset map called");
         Destroy(GameObject.Find("Grid"));
         Destroy(GameObject.Find("Grid(Clone)"));
+        Destroy(GameObject.Find("Defuser(Clone)"));
+        
         if (view.IsMine)
         {
             //Debug.Log("resetting tilemap called");

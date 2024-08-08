@@ -41,7 +41,9 @@ public class DefuserScript : MonoBehaviour
     [PunRPC]
     public void disarmingHelper()
     {
-        disarmTime -= Time.deltaTime;
+        if (PhotonNetwork.IsMasterClient) {
+            disarmTime -= Time.deltaTime;
+        }
         Debug.Log("disarm time = " + disarmTime);
 
         if (disarmTime <= 0)

@@ -13,7 +13,7 @@ public class PlaceDefuser : MonoBehaviour
     DefuserScript defuserScript;
 
     //true for testing only
-    private bool hasDefuser = true;
+    public bool hasDefuser = true;
 
     PhotonView view;
 
@@ -31,6 +31,7 @@ public class PlaceDefuser : MonoBehaviour
             if (Input.GetKeyDown("f") && hasDefuser) 
             {
                 Invoke("placeDefuser", placementTime);
+                hasDefuser = false;
                 playerMovement.setPlayerLocker(true);
             }
         } 
@@ -38,7 +39,6 @@ public class PlaceDefuser : MonoBehaviour
 
     public void placeDefuser()
     {
-        hasDefuser = false;
         playerMovement.setPlayerLocker(false);
         view.RPC("placeDefuserHelper", RpcTarget.All);
     }

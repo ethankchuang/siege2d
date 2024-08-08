@@ -24,19 +24,15 @@ public class NewTimer : MonoBehaviourPunCallbacks
     ExitGames.Client.Photon.Hashtable CustomValue;
     bool hasUpdated;
     public bool inPrep;
-
-    // testing
-    double currentMatchTime;
-    Coroutine timerCoroutine;
-
+    public bool timeUpEndedRound = true;
 
     // temp
     int waitCounter = 0;
-    bool stopWaiting = true;
     bool bombDown;
 
     public void Start()
     {
+        timeUpEndedRound = true;
         bombDown = false;
         hasUpdated = false;
         inPrep = true;
@@ -67,7 +63,6 @@ public class NewTimer : MonoBehaviourPunCallbacks
 
     public void Update()
     {
-
         if (hasUpdated && waitCounter >= 0)
         {
             waitCounter --;
@@ -99,55 +94,15 @@ public class NewTimer : MonoBehaviourPunCallbacks
 
         timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
         
-        if (timerIncrementValue <= 0)
+        if (timerIncrementValue <= 0 && timeUpEndedRound)
         {
             Debug.Log("game over");
             Game game = GameObject.Find("Game").GetComponent<Game>();
             game.endRoundHelper(!bombDown);
-            startTimer = false;
+            timeUpEndedRound = false;
+            //startTimer = false;
         }
     }
-
-    // new Timer ??
-    
-    /*public void initializeMatchTimer() {
-        currentMatchTime = RoundTimer;
-        editUI();
-
-        if (PhotonNetwork.IsMasterClient) {
-            timerCoroutine = StartCoroutine(Timer());
-        }
-    }
-    public void endGame() {
-        if (timerCoroutine != null) {
-            StopCoroutine(timerCoroutine);
-        }
-        currentMatchTime = 0;
-        editUI();
-    }
-    private IEnumerator Timer () {
-        yield return new WaitForSeconds(1f);
-
-        currentMatchTime -= 1;
-
-        if (currentMatchTime <= 0) {
-            timerCoroutine = null;
-            // end time
-        } else {
-            RefreshTimer_S();
-            timerCoroutine - StartCoroutine(Timer());
-        }
-    }
-    public void RefreshTimer_S() {
-
-    }
-    public void editUI() {
-        minutes = (int)Math.Floor(timerIncrementValue / 60);
-        seconds = (int)Math.Floor(timerIncrementValue % 60);
-
-        timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
-    }*/
-
     public void defuserPlaced()
     {
         startTime = PhotonNetwork.Time;
