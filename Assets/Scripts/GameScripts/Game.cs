@@ -9,6 +9,8 @@ using UnityEngine.UIElements;
 
 public class Game : MonoBehaviour
 {
+    [SerializeField] GameObject defPrefab;
+    [SerializeField] GameObject atkPrefab;
     public List<GameObject> defPlayerList;
     public List<GameObject> atkPlayerList;
     public List<GameObject> defAlive;
@@ -19,6 +21,9 @@ public class Game : MonoBehaviour
     private PhotonView view;
     [SerializeField] GameObject tileMap;
     public bool canEndRound;
+    public bool switchSides;
+    SpawnPlayers spawnPlayers;
+
 
     public void Start()
     {
@@ -31,6 +36,8 @@ public class Game : MonoBehaviour
         view = GetComponent<PhotonView>();
         createPlayerLists();
         canEndRound = true;
+        switchSides = false;
+        spawnPlayers = GetComponent<SpawnPlayers>();
     }
 
     public void setAliveLists(GameObject deadPlayer) 
@@ -43,13 +50,11 @@ public class Game : MonoBehaviour
             //Debug.Log((deadPlayer == player) + " is dead player?");
             if (player != deadPlayer && player.GetComponent<PlayerMovement>() != null && !player.GetComponent<PlayerMovement>().isDead)
             {
-                if(player.GetComponent<PlaceDefuser>() != null)
-                {
+                if(!player.GetComponent<PlayerMovement>().isDef) {
                     //atkPlayerList.Add(player);
                     atkAlive.Add(player);
                 }
-                else if (player.GetComponent<DisarmDefuser>() != null)
-                {
+                else {
                     //defPlayerList.Add(player);
                     defAlive.Add(player);
                 }
@@ -69,20 +74,20 @@ public class Game : MonoBehaviour
             //Debug.Log("gameobject is player? " + (player.GetComponent<PlayerMovement>() != null));
             if (player.GetComponent<PlayerMovement>() != null)
             {
-                if(player.GetComponent<PlaceDefuser>() != null)
-                {
+                if(!player.GetComponent<PlayerMovement>().isDef) {
                     //atkPlayerList.Add(player);
                     atkPlayerList.Add(player);
+                    Debug.Log("adding to atk player list " + player.GetComponent<PlayerMovement>().nickName );
                 }
-                else if (player.GetComponent<DisarmDefuser>() != null)
-                {
+                else {
                     //defPlayerList.Add(player);
                     defPlayerList.Add(player);
+                    Debug.Log("adding to def player list" + player.GetComponent<PlayerMovement>().nickName);
                 }
             }
         }
-        //Debug.Log("def count " + defPlayerList.Count);
-        //Debug.Log("atk count " + atkPlayerList.Count);
+        Debug.Log("def count " + defPlayerList.Count);
+        Debug.Log("atk count " + atkPlayerList.Count);
         //prepActiveList();
     }
     
@@ -103,6 +108,7 @@ public class Game : MonoBehaviour
     //[PunRPC]
     public void endRound(bool defWin)
     {
+        createPlayerLists();
         Debug.Log("end round called!?");
         if (defWin) {
             defPoints ++;
@@ -122,22 +128,49 @@ public class Game : MonoBehaviour
             }
         }
 
-        //Debug.Log("def count " + defPlayerList.Count);
-        //Debug.Log("atk count " + atkPlayerList.Count);
+        if (atkPoints + defPoints == 2) {
+            switchSides = true;
+            Debug.Log("2 rounds passed");
+        }
+        Debug.Log("def count " + defPlayerList.Count);
+        Debug.Log("atk count " + atkPlayerList.Count);
         foreach (GameObject player in defPlayerList) {
             Debug.Log("trying to call round end screen for def");
             if (player.GetComponent<PlayerMovement>().nickName == PhotonNetwork.LocalPlayer.NickName) {
                 player.GetComponent<PlayerMovement>().roundEndScreen(defWin);
+                if (switchSides) {
+                    swappingPlayer();
+                    Debug.Log("swapping sides");
+                    switchSides = false;
+                }
             }
         }
         foreach (GameObject player in atkPlayerList) {
             Debug.Log("trying to call round end screen for atk");
             if (player.GetComponent<PlayerMovement>().nickName == PhotonNetwork.LocalPlayer.NickName) {
                 player.GetComponent<PlayerMovement>().roundEndScreen(!defWin);
+                if (switchSides) {
+                    swappingPlayer();
+                    Debug.Log("swapping sides");
+                    switchSides = false;
+                }
             }
         }
-
-    } 
+    }
+    public void swappingPlayer() {
+        //if (view.IsMine) {
+            int atkTemp = defPoints;
+            int defTemp = atkPoints;
+            defPoints = defTemp;
+            atkPoints = atkTemp;
+            foreach (GameObject player in defPlayerList) {
+                player.GetComponent<PlayerMovement>().swapSides();
+            }
+            foreach (GameObject player in atkPlayerList) {
+                player.GetComponent<PlayerMovement>().swapSides();
+            }
+            createPlayerLists();
+    }  
 
     public void resetMap()
     {

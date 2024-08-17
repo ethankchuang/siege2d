@@ -98,6 +98,7 @@ GameObject:
   - component: {fileID: 1024364879154014571}
   - component: {fileID: 3761870010117959196}
   - component: {fileID: 7918236381332492632}
+  - component: {fileID: 5291400040431028632}
   m_Layer: 0
   m_Name: PlayerDefender
   m_TagString: Player
@@ -148,9 +149,14 @@ MonoBehaviour:
   flashBang: {fileID: 7081160779873467669, guid: 8cb06eb23f8bcde4f8a718976b35351a, type: 3}
   selfSprite: {fileID: 7252392312698768361}
   shadowSprite: {fileID: 8753346609999635867}
+  defTint: {r: 0.5137255, g: 0.8784314, b: 1, a: 1}
+  atkTint: {r: 1, g: 0.5764706, b: 0.5137255, a: 1}
+  ammoHUD: {fileID: 0}
   nickName: 
   hasWeapon: 0
   hasGadget: 0
+  myID: 0
+  hasSwapped: 0
 --- !u!114 &9079810773962056955
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,6 +181,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfb5b6dd967cff844af301bc0df1f41e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flashbangScript: {fileID: 7081160779873467669, guid: 8cb06eb23f8bcde4f8a718976b35351a, type: 3}
+  grenadeScript: {fileID: 2532850382107148982, guid: ef845c98d34e538449d9b76dbc80d667, type: 3}
+  breachChargeScript: {fileID: 2532850382107148982, guid: b6ba6974e523766479647c82f0288c8f, type: 3}
+  flareScript: {fileID: 2532850382107148982, guid: 7e6b635496f61844a9ab6de4272c2c22, type: 3}
+  maxGrenades: 0
+  hud: {fileID: 0}
 --- !u!114 &315623314484450019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -378,6 +390,23 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &5291400040431028632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2628644563795243899}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cef179e53b89284980986a41c030f9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defuser: {fileID: 2809744246055173399, guid: d836157977535c04b96136302ac8126b, type: 3}
+  placementPoint: {fileID: 7290107525213552956}
+  placementTime: 4
+  hasDefuser: 1
+  bombSiteTile: {fileID: 11400000, guid: a5dbd3130ad45f64396f916494f073de, type: 2}
 --- !u!1 &2677656747546874311
 GameObject:
   m_ObjectHideFlags: 0

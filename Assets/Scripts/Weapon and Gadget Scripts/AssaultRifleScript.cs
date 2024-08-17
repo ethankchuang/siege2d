@@ -9,7 +9,7 @@ public class AssaultRifleScript : MonoBehaviour, IWeaponScript
     [SerializeField]private float weaponRange;
     [SerializeField]private float hipSpread;
     [SerializeField]private float adsSpread;
-    [SerializeField]private float maxAmmo;
+    [SerializeField]private int maxAmmo;
     private float currentAmmo;
     [SerializeField]private float timeBetweenShots;
     [SerializeField]private float reloadTime;
@@ -18,19 +18,21 @@ public class AssaultRifleScript : MonoBehaviour, IWeaponScript
     [SerializeField]private int damage;
     [SerializeField]private AudioClip shotSoundClip;
     [SerializeField]private AudioClip reloadSoundClip;
+    public Sprite sprite;
     private Transform muzzleFlash;
     bool firing = false;
     bool reloading = false;
     bool canShoot = true;
     bool isADS = false;
     Vector3 spr;
+    PlayerMovement playerMovement;
 
     public void onStart()
     {
         currentAmmo = maxAmmo;
         Debug.Log("on start called " + currentAmmo);
     }
-    public void shoot(Transform firePoint, AudioSource audioSource)
+    public bool shoot(Transform firePoint, AudioSource audioSource)
     {
         //Debug.Log("shoot called " + canShoot + " ca n shoot " + currentAmmo + " current ammo");
         if (canShoot && currentAmmo > 0)
@@ -80,7 +82,7 @@ public class AssaultRifleScript : MonoBehaviour, IWeaponScript
                     hittable = hit.collider.transform.parent.GetComponent<IShootAble>();
                     if (hittable != null) {
                         hittable.RecieveHit(hit, damage);
-                    } else {
+                    } else if (hit.collider.transform.parent.parent != null){
                         hittable = hit.collider.transform.parent.parent.GetComponent<IShootAble>();
                         if (hittable != null) {
                             hittable.RecieveHit(hit, damage);
@@ -90,6 +92,11 @@ public class AssaultRifleScript : MonoBehaviour, IWeaponScript
                                 hitBarricade.RecieveHit(hit.point, firePoint.transform.position.x, firePoint.transform.position.y);
                             }
                         }
+                    } else if (hit.collider.GetComponent<BarricadeScript>() != null) {
+                            var hitBarricade = hit.collider.GetComponent<BarricadeScript>();
+                            if (hitBarricade != null) {
+                                hitBarricade.RecieveHit(hit.point, firePoint.transform.position.x, firePoint.transform.position.y);
+                            }
                     }
                 }
             } else {
@@ -100,7 +107,10 @@ public class AssaultRifleScript : MonoBehaviour, IWeaponScript
             currentAmmo --;
             //Debug.Log("current ammo = " + currentAmmo);
             Invoke("ShootingHelper", timeBetweenShots);
+
+            return true;
         }
+        return false;
     }
     private void ShootingHelper()
     {
@@ -108,10 +118,11 @@ public class AssaultRifleScript : MonoBehaviour, IWeaponScript
         muzzleFlash.gameObject.SetActive(false);
     }
 
-    public void reload(AudioSource audioSource)
+    public void reload(AudioSource audioSource, PlayerMovement pm)
     {
         if (!reloading)
         {
+            playerMovement = pm;
             Invoke(nameof(reloadHelper), reloadTime);
             reloading = true;
             audioSource.clip = reloadSoundClip;
@@ -123,6 +134,7 @@ public class AssaultRifleScript : MonoBehaviour, IWeaponScript
     {
         currentAmmo = maxAmmo;
         reloading = false;
+        playerMovement.ammoHUD.setCurrentAmmo(maxAmmo);
     }
     public void aimDownSight(Light2D light2D)
     {
@@ -136,5 +148,12 @@ public class AssaultRifleScript : MonoBehaviour, IWeaponScript
         light2D.pointLightInnerAngle = innerAngle;
         light2D.pointLightOuterAngle = outerAngle;
         isADS = false;
+    }
+    
+    public Sprite getSprite() {
+        return sprite;
+    }
+    public int getMaxAmmo() {
+        return maxAmmo;
     }
 }

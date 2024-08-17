@@ -6,6 +6,7 @@ using Photon.Pun;
 using Unity.VisualScripting;
 using System.Numerics;
 using Vector2 = UnityEngine.Vector2;
+using System;
 
 public class SoftWallScript : MonoBehaviour
 {
@@ -15,7 +16,8 @@ public class SoftWallScript : MonoBehaviour
     bool wasDestroyed;
     int counter;
     BoundsInt bounds;
-    List<UnityEngine.Vector3> allTilesLocations;
+    List<UnityEngine.Vector3Int> allTilesLocations;
+    //GameObject center;
 
     void Start()
     {
@@ -27,19 +29,19 @@ public class SoftWallScript : MonoBehaviour
 
 
         Vector3Int loc;
-        allTilesLocations = new List<UnityEngine.Vector3>();
+        allTilesLocations = new List<UnityEngine.Vector3Int>();
         bounds = tilemap.cellBounds;
 
-        for (int x = bounds.xMin; x < bounds.xMax; x ++)
-        {
-            for (int y = bounds.yMin; y < bounds.yMax; y ++)
-            {
+        for (int x = bounds.xMin; x < bounds.xMax; x ++) {
+            for (int y = bounds.yMin; y < bounds.yMax; y ++) {
                 loc = new Vector3Int(x, y, 0);
 
                 if (tilemap.HasTile(loc))
                 {
-                    //Debug.Log("has tile at " + loc);
-                    allTilesLocations.Add(tilemap.CellToWorld(loc));
+                    //Debug.Log("allTilesLocations added at cell: " + loc);
+                    //Debug.Log("allTilesLocations added at world:" + tilemap.CellToWorld(loc));
+                    //allTilesLocations.Add(tilemap.CellToWorld(loc));
+                    allTilesLocations.Add(loc);
                 }
             }
         }
@@ -73,16 +75,18 @@ public class SoftWallScript : MonoBehaviour
         Debug.Log(tilemap.GetTile(tileCord) == null);*/
 
         //Debug.Log("soft wall recieve hit");
-        view.RPC("takeDmg", RpcTarget.All, hit.point.x - (hit.normal.x * 0.01f), hit.point.y - (hit.normal.y * 0.01f));
+        var cellPos = tilemap.WorldToCell(new UnityEngine.Vector3(hit.point.x - (hit.normal.x * 0.01f), hit.point.y - (hit.normal.y * 0.01f)));
+        view.RPC("takeDmg", RpcTarget.All, cellPos.x, cellPos.y);
     }
 
     [PunRPC]
-    public void takeDmg(float x, float y)
+    public void takeDmg(int x, int y)
     {
-        //Debug.Log("take dmg called " + tilemap.GetTile(tilemap.WorldToCell(new Vector2 (x, y))) == null); 
-        Vector3Int tilePos = tilemap.WorldToCell(new Vector2 (x, y));
-
+        //Debug.Log("take dmg called, has tile? " + (tilemap.GetTile(new Vector3Int (x, y)) != null)); 
+        Vector3Int tilePos = new Vector3Int(x, y);//tilemap.WorldToCell(new Vector2 (x, y));
+        //Debug.Log("tile pos " + tilePos.x + ", " + tilePos.y);
         tilemap.SetTile(tilePos, null);
+        //Debug.Log("removing tile, has tile? " + (tilemap.GetTile(new Vector3Int (x, y)) == null)); 
         wasDestroyed = true;
     }
 
@@ -96,24 +100,49 @@ public class SoftWallScript : MonoBehaviour
                 shadowCaster2DCreator.Create();
                 wasDestroyed = false;   
                 //view.RPC("CreateHelper", RpcTarget.All);
-                counter = 5;
+                counter = 5;    
             }
         }
     }
 
     public void RecieveHitAOE(GameObject center, float radius)
     {
-        //Debug.Log("receive hit AOE called");
+        Debug.Log("receive hit AOE called");
         for (int i = 0; i < allTilesLocations.Count; i ++)
         {
             //Debug.Log(allTilesLocations[i] + " <- all tile locations, grenade pos -> " + center);
-            var distance = UnityEngine.Vector3.Distance(allTilesLocations[i], center.transform.position);
+            var distance = Vector2.Distance(tilemap.CellToWorld(allTilesLocations[i]), center.transform.position);
             //Debug.Log(distance + " distance between grenade and tile " + i);
             if (distance <= radius)
             {
                 view.RPC("takeDmg", RpcTarget.All, allTilesLocations[i].x, allTilesLocations[i].y);
-                //Debug.Log("called recieve hit");
+                Debug.Log("called recieve hit");
+
+                /*Vector3Int tilePos = tilemap.WorldToCell(new Vector2 (allTilesLocations[i].x, allTilesLocations[i].y));
+
+                tilemap.SetTile(tilePos, null);
+                wasDestroyed = true;
+
+                var tm = new ArrayList();
+                for (int x = bounds.xMin; x < bounds.xMax; x ++) {
+                    for (int y = bounds.yMin; y < bounds.yMax; y ++) {
+                        var loc = new Vector3Int(x, y, 0);
+                        tm.Add((loc.x, loc.y));
+                    }
+                }
+                view.RPC(nameof(setTilemaps), RpcTarget.All, tm);*/
             }
         }
     }
+    /*public void RecieveHitAOEHelper(GameObject gameObject, float radius) {
+        center = gameObject;
+        view.RPC(nameof(RecieveHitAOE), RpcTarget.All, radius);
+    }*/
+    /*[PunRPC]
+    public void setTilemaps(ArrayList tmArray) {
+        tilemap.ClearAllTiles();
+        for (int i = 0; i < tmArray.Count; i ++) {
+            tilemap.
+        }
+    }*/
 }

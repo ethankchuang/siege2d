@@ -29,4 +29,7 @@ public class FlareScript : MonoBehaviour, ISecondaryGadget
     {
         return "flare";
     }
+    public Sprite GetSprite() {
+        return GetComponent<SpriteRenderer>().sprite;
+    }
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using UnityEngine.Tilemaps;
 //using UnityEditorInternal;
 
 public class PlaceDefuser : MonoBehaviour
@@ -16,6 +17,8 @@ public class PlaceDefuser : MonoBehaviour
     public bool hasDefuser = true;
 
     PhotonView view;
+    Tilemap tilemap;
+    [SerializeField] Tile bombSiteTile;
 
     public void Start()
     {
@@ -28,7 +31,14 @@ public class PlaceDefuser : MonoBehaviour
     {
         if (view.IsMine)
         {
-            if (Input.GetKeyDown("f") && hasDefuser) 
+            var tileMapGO = GameObject.Find("Grid");
+            if (tileMapGO == null) {
+                tilemap = GameObject.Find("Grid(Clone)").transform.Find("Floor").GetComponent<Tilemap>();
+            } else {
+                tilemap = GameObject.Find("Grid").transform.Find("Floor").GetComponent<Tilemap>();
+            }
+            
+            if (Input.GetKeyDown("f") && hasDefuser && tilemap.GetTile(tilemap.WorldToCell(placementPoint.position)) == bombSiteTile ) 
             {
                 Invoke("placeDefuser", placementTime);
                 hasDefuser = false;

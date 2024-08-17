@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using Photon.Pun;
 
 public class GrenadeScript : MonoBehaviour, ISecondaryGadget
 {
@@ -12,6 +13,8 @@ public class GrenadeScript : MonoBehaviour, ISecondaryGadget
     private GameObject grenadeInstance;
     private Collider2D[] hitColliders;
     private ContactFilter2D noFilter;
+    SecondaryGadgetScript throwingScript;
+    PlayerMovement player;
 
     public void explode()
     {
@@ -26,14 +29,16 @@ public class GrenadeScript : MonoBehaviour, ISecondaryGadget
         {
             if (hitCollider && hitCollider.CompareTag("Player"))
             {
-                var player = hitCollider.transform.parent.GetComponent<PlayerMovement>();    
+                player = hitCollider.transform.parent.parent.GetComponent<PlayerMovement>();    
 
                 Debug.Log("found player");
                 var closestPoint = hitCollider.ClosestPoint(grenadeInstance.transform.position);
                 var distance = Vector3.Distance(closestPoint, grenadeInstance.transform.position);;
                 var dmgPercent = Mathf.InverseLerp(dmgRadius, 0, distance);
                 Debug.Log(dmgPercent + " = dmg%");
-                player.takeDmg((int)(maxDamage * dmgPercent));
+                //player.takeDmg((int)(maxDamage * dmgPercent));
+                //view.RPC(nameof(doDamage), RpcTarget.All, dmgPercent);
+                throwingScript.dealDamageHelper(dmgPercent, maxDamage, player.myID);
             }
         }
 
@@ -41,9 +46,11 @@ public class GrenadeScript : MonoBehaviour, ISecondaryGadget
     }
 
 
+
     public void throwGadget(float force, GameObject player)
     {
         Transform firePoint = player.transform.GetChild(2).Find("FirePoint");
+        throwingScript = player.GetComponent<SecondaryGadgetScript>();
 
         grenadeInstance = Instantiate(gameObject, firePoint.position, firePoint.rotation);
         grenadeInstance.GetComponent<Rigidbody2D>().AddForce(firePoint.up * force, ForceMode2D.Impulse);
@@ -55,5 +62,8 @@ public class GrenadeScript : MonoBehaviour, ISecondaryGadget
     public string getName()
     {
         return "grenade";
+    }
+    public Sprite GetSprite() {
+        return GetComponent<SpriteRenderer>().sprite;
     }
 }

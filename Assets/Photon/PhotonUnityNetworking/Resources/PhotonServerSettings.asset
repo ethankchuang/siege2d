@@ -66,6 +66,15 @@ MonoBehaviour:
   - shootingVisual
   - shootingVisualEnd
   - endRoundHelperHelper
+  - setCurrentGadgetHelper
+  - destroyWalls
+  - changeLight
+  - doDamage
+  - dealDamage
+  - setLight
+  - addToIDList
+  - setMyID
+  - destroyGO
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

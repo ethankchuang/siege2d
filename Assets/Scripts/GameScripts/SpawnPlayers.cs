@@ -53,6 +53,7 @@ public class SpawnPlayers : MonoBehaviour
                 currentSpawnPoint = defSpawnPoints[Random.Range(0, defSpawnPoints.Count)];
             }
             pos = currentSpawnPoint;
+
             PhotonNetwork.Instantiate(defenderPrefab.name, pos, Quaternion.identity);
         } else {
             currentSpawnPoint = atkSpawnPoints[Random.Range(0, atkSpawnPoints.Count)];
@@ -62,9 +63,8 @@ public class SpawnPlayers : MonoBehaviour
             pos = currentSpawnPoint;
             PhotonNetwork.Instantiate(attackerPrefab.name, pos, Quaternion.identity);
         }
-        view.RPC(nameof(takeOffList), RpcTarget.All, pos.x, pos.y, (bool)PhotonNetwork.LocalPlayer.CustomProperties["isDef"]);
-
         //Debug.Log(PhotonNetwork.CurrentRoom.PlayerCount);
+        
     }
 
     [PunRPC]
@@ -81,9 +81,10 @@ public class SpawnPlayers : MonoBehaviour
         usedAtkSpawnPoints.Clear();
         usedDefSpawnPoints.Clear();
     }
-    public Vector2 respawn(GameObject player)
+    public Vector2 respawn(bool isDef)
     {
-        if (player.GetComponent<PlayerMovement>().isDef) {
+        Debug.Log("respawning players, player is def? " + isDef);
+        if (isDef) {
             currentSpawnPoint = defSpawnPoints[Random.Range(0, defSpawnPoints.Count)];
             while (usedDefSpawnPoints.Contains(currentSpawnPoint)) {
                 currentSpawnPoint = defSpawnPoints[Random.Range(0, defSpawnPoints.Count)];
@@ -95,7 +96,7 @@ public class SpawnPlayers : MonoBehaviour
             }
         }
         pos = currentSpawnPoint;
-        view.RPC(nameof(takeOffList), RpcTarget.All, pos.x, pos.y, player.GetComponent<PlayerMovement>().isDef);
+        view.RPC(nameof(takeOffList), RpcTarget.All, pos.x, pos.y, isDef);
 
         return pos;
     }
