@@ -7,6 +7,7 @@ using System;
 public class DefuserScript : MonoBehaviour
 {
     [SerializeField] private float disarmTime;
+    private float currentTime;
     bool beingDefused = false;
     GameObject defuser;
     PhotonView view;
@@ -14,6 +15,7 @@ public class DefuserScript : MonoBehaviour
     void Start()
     {
         view = GetComponent<PhotonView>();
+        currentTime = disarmTime;
     }
 
     public bool getBeingDisarmed()
@@ -34,30 +36,35 @@ public class DefuserScript : MonoBehaviour
 
     public void disarming(GameObject pDefusing)
     {
-        view.RPC("disarmingHelper", RpcTarget.All);
+        currentTime -= Time.deltaTime;
+        view.RPC("disarmingHelper", RpcTarget.All, currentTime);
         playerDefusing = pDefusing;
     }
 
     [PunRPC]
-    public void disarmingHelper()
+    public void disarmingHelper(float curTime)
     {
-        if (PhotonNetwork.IsMasterClient) {
-            disarmTime -= Time.deltaTime;
-        }
-        Debug.Log("disarm time = " + disarmTime);
+        currentTime = curTime;
+        
+        Debug.Log("disarm time = " + currentTime);
 
-        if (disarmTime <= 0)
+        if (currentTime <= 0)
         {
             // implement later
             Debug.Log("bomb defused, defense wins");
+            
+            currentTime = disarmTime;
+            beingDefused = false;
             Game game = GameObject.Find("Game").GetComponent<Game>();
             game.endRoundHelper(true);
+            //gameObject.SetActive(false); 
         }
 
         beingDefused = true;
     }
+    
 
-    public void defuserPlaced()
+    /*public void defuserPlaced()
     {
         Debug.Log("defuser is defined in defuser script");
         defuser = GameObject.Find("Defuser(Clone)");
@@ -67,5 +74,5 @@ public class DefuserScript : MonoBehaviour
     {
         Debug.Log("get defuser has been called");
         return defuser;
-    }
+    }*/
 }

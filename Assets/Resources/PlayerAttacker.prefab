@@ -217,12 +217,12 @@ MonoBehaviour:
   m_ComponentVersion: 1
   m_LightType: 3
   m_BlendStyleIndex: 0
-  m_FalloffIntensity: 0.5
+  m_FalloffIntensity: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: 9b680a77497a064055965b77
+  m_ApplyToSortingLayers: 9b680a77497a064055965b770560fa3d
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -234,7 +234,7 @@ MonoBehaviour:
   m_ShadowIntensityEnabled: 1
   m_ShadowIntensity: 1
   m_ShadowVolumeIntensityEnabled: 0
-  m_ShadowVolumeIntensity: 0.75
+  m_ShadowVolumeIntensity: 1
   m_Vertices:
   - position: {x: 0.9985302, y: 0.9985302, z: 0}
     color: {r: 0.70710677, g: 0.70710677, b: 0, a: 0}
@@ -664,6 +664,7 @@ GameObject:
   - component: {fileID: 6050201655910606614}
   - component: {fileID: 6050201655910606602}
   - component: {fileID: 6735376421044562467}
+  - component: {fileID: 2585407207308529927}
   - component: {fileID: 8353369919469094549}
   - component: {fileID: 4205757043457096901}
   - component: {fileID: 5208312278882251886}
@@ -671,7 +672,6 @@ GameObject:
   - component: {fileID: 2401275307388785842}
   - component: {fileID: 6721244133646108442}
   - component: {fileID: 6031155606600973418}
-  - component: {fileID: 2585407207308529927}
   m_Layer: 0
   m_Name: PlayerAttacker
   m_TagString: Player
@@ -747,6 +747,20 @@ MonoBehaviour:
   placementTime: 4
   hasDefuser: 1
   bombSiteTile: {fileID: 11400000, guid: a5dbd3130ad45f64396f916494f073de, type: 2}
+--- !u!114 &2585407207308529927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6050201655910606605}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e55005577a0be64b9ce7ecb304f6362, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defuser: {fileID: 0}
+  defuserParent: {fileID: 0}
 --- !u!114 &8353369919469094549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -968,18 +982,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &2585407207308529927
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6050201655910606605}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e55005577a0be64b9ce7ecb304f6362, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &6050201656447842778
 GameObject:
   m_ObjectHideFlags: 0

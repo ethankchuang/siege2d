@@ -8,54 +8,49 @@ using ExitGames.Client.Photon.StructWrapping;
 
 public class DisarmDefuser : MonoBehaviour
 {
-    GameObject defuser;
+    public GameObject defuser;
+    public GameObject defuserParent;
     DefuserScript defuserScript;
     PlayerMovement playerMovement;
-
-    private float disarmTime;
-    private Boolean disarmLocked;
-
-    bool defuserKnown;
+    bool defuserDown;
 
     PhotonView view;
 
     void Start()
     {
         view = GetComponent<PhotonView>();
-        defuserScript = GameObject.Find("Game").GetComponent<DefuserScript>();
-        defuserKnown = false;
         playerMovement = gameObject.GetComponent<PlayerMovement>();
+        defuserParent = GameObject.Find("DefuserParent");
+        defuserDown = false;
     }
 
     void Update()
     {
         if (view.IsMine)
         {
+            if (defuserParent.GetComponentInChildren<DefuserScript>() != null) {
+                defuser = defuserParent.GetComponentInChildren<DefuserScript>().gameObject;
+                defuserScript = defuserParent.GetComponentInChildren<DefuserScript>();
+                defuserDown = true;
+            } else { defuserDown = false;}
+            //Debug.Log(defuserDown + " defuser down?");
+            //Debug.Log(defuser.transform.position.x + ", " + defuser.transform.position.y + " defuser pos?");
+            //Debug.Log(transform.position.x + ", " + transform.position.y + " my pos?");
+            //Debug.Log(!defuserScript.getBeing Disarmed() + " being disarmed");
+            //Debug.Log((defuserScript.beingDisarmedBy() == gameObject) + " being disarmed by me");
+            
+
             if (Input.GetKey("f"))
-            {
-                if (defuserKnown
-                    && transform.position.x > defuser.transform.position.x - 10/*3.5*/
-                    && transform.position.x < defuser.transform.position.x + 10/*3.5*/
-                    && transform.position.y > defuser.transform.position.y - 10/*3.5*/
-                    && transform.position.y < defuser.transform.position.y + 10/*3.5*/
-                    && (defuserScript.beingDisarmedBy() == gameObject || !defuserScript.getBeingDisarmed()))
-                {
+            { 
+                if (defuserDown
+                    && transform.position.x > defuser.transform.position.x - 0.6/*3.5*/
+                    && transform.position.x < defuser.transform.position.x + 0.6/*3.5*/
+                    && transform.position.y > defuser.transform.position.y - 0.6/*3.5*/
+                    && transform.position.y < defuser.transform.position.y + 0.6/*3.5*/
+                    && (!defuserScript.getBeingDisarmed() || defuserScript.beingDisarmedBy() == gameObject)) {
                     Debug.Log("defusing defuser");
                     defuserScript.disarming(gameObject);
                     playerMovement.setPlayerDisarming(true);
-                }
-                else if (!defuserKnown)                                                        
-                {
-                    defuser = defuserScript.getDefuser();
-
-                    if (defuser.IsType<GameObject>())
-                    {
-                        defuserKnown = true;
-                    }
-                    if (defuser == null)
-                    {
-                        Debug.Log("defuser is null");
-                    }
                 }
             }
             else if (Input.GetKeyUp("f") && playerMovement.isPlayerDisarming())

@@ -6,20 +6,17 @@ using System;
 
 public class FlareScript : MonoBehaviour, ISecondaryGadget
 {
-    private GameObject grenadeInstance;
-
     public void explode()
     {
-        DestroyImmediate(grenadeInstance, true);
+        DestroyImmediate(gameObject, true);
     }
-
 
     public void throwGadget(float force, GameObject player)
     {
         Transform firePoint = player.transform.GetChild(2).Find("FirePoint");
 
-        grenadeInstance = Instantiate(gameObject, firePoint.position, firePoint.rotation);
-        grenadeInstance.GetComponent<Rigidbody2D>().AddForce(firePoint.up * force, ForceMode2D.Impulse);
+        //grenadeInstance = Instantiate(gameObject, firePoint.position, firePoint.rotation);
+        gameObject.GetComponent<Rigidbody2D>().AddForce(firePoint.up * force, ForceMode2D.Impulse);
         
         Debug.Log("player pos " + player.transform.position);
         Invoke("explode", force + 10);

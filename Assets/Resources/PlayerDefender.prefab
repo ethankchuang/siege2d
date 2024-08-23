@@ -91,6 +91,7 @@ GameObject:
   - component: {fileID: 2628644563795243872}
   - component: {fileID: 2628644563795243900}
   - component: {fileID: 9079810773962056955}
+  - component: {fileID: 5291400040431028632}
   - component: {fileID: 3212153563589263866}
   - component: {fileID: 315623314484450019}
   - component: {fileID: 5607449563143448755}
@@ -98,7 +99,6 @@ GameObject:
   - component: {fileID: 1024364879154014571}
   - component: {fileID: 3761870010117959196}
   - component: {fileID: 7918236381332492632}
-  - component: {fileID: 5291400040431028632}
   m_Layer: 0
   m_Name: PlayerDefender
   m_TagString: Player
@@ -169,6 +169,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e55005577a0be64b9ce7ecb304f6362, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defuser: {fileID: 0}
+  defuserParent: {fileID: 0}
+--- !u!114 &5291400040431028632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2628644563795243899}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cef179e53b89284980986a41c030f9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defuser: {fileID: 2809744246055173399, guid: d836157977535c04b96136302ac8126b, type: 3}
+  placementPoint: {fileID: 7290107525213552956}
+  placementTime: 4
+  hasDefuser: 1
+  bombSiteTile: {fileID: 11400000, guid: a5dbd3130ad45f64396f916494f073de, type: 2}
 --- !u!114 &3212153563589263866
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -390,23 +409,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &5291400040431028632
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2628644563795243899}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cef179e53b89284980986a41c030f9b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  defuser: {fileID: 2809744246055173399, guid: d836157977535c04b96136302ac8126b, type: 3}
-  placementPoint: {fileID: 7290107525213552956}
-  placementTime: 4
-  hasDefuser: 1
-  bombSiteTile: {fileID: 11400000, guid: a5dbd3130ad45f64396f916494f073de, type: 2}
 --- !u!1 &2677656747546874311
 GameObject:
   m_ObjectHideFlags: 0
@@ -574,12 +576,12 @@ MonoBehaviour:
   m_ComponentVersion: 1
   m_LightType: 3
   m_BlendStyleIndex: 0
-  m_FalloffIntensity: 0.5
+  m_FalloffIntensity: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: 9b680a77497a064055965b77
+  m_ApplyToSortingLayers: 9b680a77497a064055965b770560fa3d
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -591,7 +593,7 @@ MonoBehaviour:
   m_ShadowIntensityEnabled: 1
   m_ShadowIntensity: 1
   m_ShadowVolumeIntensityEnabled: 0
-  m_ShadowVolumeIntensity: 0.75
+  m_ShadowVolumeIntensity: 1
   m_Vertices:
   - position: {x: 0.9985302, y: 0.9985302, z: 0}
     color: {r: 0.70710677, g: 0.70710677, b: 0, a: 0}

@@ -440,6 +440,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
         reticle.SetActive(true);
         Destroy(spectateCamInstance);
         Cursor.visible = true;
+        playerLocked = false;
 
         // respawning (maybe add a timer or some other intermediate?)
         if (view.IsMine) {

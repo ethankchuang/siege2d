@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using Unity.Mathematics;
 using UnityEngine;
+using Photon.Pun;
 using UnityEngine.Rendering.Universal;
 
 public class ShotgunScript : MonoBehaviour, IWeaponScript  
@@ -29,6 +30,7 @@ public class ShotgunScript : MonoBehaviour, IWeaponScript
     bool isADS = false;
     Vector3 spr;
     private Transform muzzleFlash;
+    PlayerMovement playerMovement;
 
     // for testing and funsies
     [SerializeField] private int numBullets;
@@ -75,11 +77,12 @@ public class ShotgunScript : MonoBehaviour, IWeaponScript
                     weaponRange
                 );
 
-                var trail = Instantiate(
+                /*var trail = Instantiate(
                     bulletTrail,
                     firePoint.position,
                     firePoint.transform.rotation
-                );
+                );*/
+                var trail = PhotonNetwork.Instantiate("BulletTrail", firePoint.position, firePoint.transform.rotation);
 
                 var trailScript = trail.GetComponent<BulletTrailScript>();
 
@@ -145,18 +148,19 @@ public class ShotgunScript : MonoBehaviour, IWeaponScript
         muzzleFlash.gameObject.SetActive(false);
     }
 
-    public void reload(AudioSource audioSource, PlayerMovement playerMovement)
+    public void reload(AudioSource audioSource, PlayerMovement pm)
     {
         //Debug.Log("reload called " + reloading);
         if (!reloading)
         {
+            playerMovement = pm;
             Invoke(nameof(reloadHelper), reloadTime);
             reloading = true;
             audioSource.clip = reloadSoundClip;
             audioSource.Play();
         }
     }
-    public void reloadHelper(PlayerMovement playerMovement)
+    public void reloadHelper()
     {
         //Debug.Log("reload helper called");
         currentAmmo = maxAmmo;

@@ -10,7 +10,7 @@ public class GrenadeScript : MonoBehaviour, ISecondaryGadget
     [SerializeField] private float dmgRadius;
     [SerializeField] private int maxDamage;
 
-    private GameObject grenadeInstance;
+
     private Collider2D[] hitColliders;
     private ContactFilter2D noFilter;
     SecondaryGadgetScript throwingScript;
@@ -18,11 +18,11 @@ public class GrenadeScript : MonoBehaviour, ISecondaryGadget
 
     public void explode()
     {
-        Debug.Log("grenade pos " + grenadeInstance.transform.position);
+        Debug.Log("grenade pos " + transform.position);
         hitColliders = new Collider2D[10];
 
         //get all gameobjects in each radius
-        Physics2D.OverlapCircle(grenadeInstance.transform.position, dmgRadius, noFilter.NoFilter(), hitColliders);
+        Physics2D.OverlapCircle(transform.position, dmgRadius, noFilter.NoFilter(), hitColliders);
         Debug.Log("hit collider length " + dmgRadius + " : " + hitColliders.Count());
 
         foreach(var hitCollider in hitColliders)
@@ -32,8 +32,8 @@ public class GrenadeScript : MonoBehaviour, ISecondaryGadget
                 player = hitCollider.transform.parent.parent.GetComponent<PlayerMovement>();    
 
                 Debug.Log("found player");
-                var closestPoint = hitCollider.ClosestPoint(grenadeInstance.transform.position);
-                var distance = Vector3.Distance(closestPoint, grenadeInstance.transform.position);;
+                var closestPoint = hitCollider.ClosestPoint(transform.position);
+                var distance = Vector3.Distance(closestPoint, transform.position);;
                 var dmgPercent = Mathf.InverseLerp(dmgRadius, 0, distance);
                 Debug.Log(dmgPercent + " = dmg%");
                 //player.takeDmg((int)(maxDamage * dmgPercent));
@@ -42,7 +42,7 @@ public class GrenadeScript : MonoBehaviour, ISecondaryGadget
             }
         }
 
-        DestroyImmediate(grenadeInstance, true);
+        DestroyImmediate(gameObject, true);
     }
 
 
@@ -52,8 +52,8 @@ public class GrenadeScript : MonoBehaviour, ISecondaryGadget
         Transform firePoint = player.transform.GetChild(2).Find("FirePoint");
         throwingScript = player.GetComponent<SecondaryGadgetScript>();
 
-        grenadeInstance = Instantiate(gameObject, firePoint.position, firePoint.rotation);
-        grenadeInstance.GetComponent<Rigidbody2D>().AddForce(firePoint.up * force, ForceMode2D.Impulse);
+        //grenadeInstance = Instantiate(gameObject, firePoint.position, firePoint.rotation);
+        gameObject.GetComponent<Rigidbody2D>().AddForce(firePoint.up * force, ForceMode2D.Impulse);
         
         Debug.Log("player pos " + player.transform.position);
         Invoke("explode", force);

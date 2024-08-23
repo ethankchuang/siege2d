@@ -77,21 +77,14 @@ public class SecondaryGadgetScript : MonoBehaviour
                 }
                 if (Input.GetKeyUp("g"))
                 {
-                    //Debug.Log("strenght = " + strength);
                     if (strength >= 5) {strength = 5;}
-
-                    //Debug.Log("g key is up");
-                    //currentGadgetScript.throwGadget(strength, gameObject);
-                    //PhotonNetwork.Instantiate("Flashbang", gameObject.transform.GetChild(2).firePoint.position, firePoint.rotation);
-                    if (currentGadgetScript is BreachChargeScript) {
-                        var breachInstance = PhotonNetwork.Instantiate(currentGadgetScript.getName(), transform.GetChild(2).Find("FirePoint").position, transform.GetChild(2).Find("FirePoint").rotation);
-                        breachInstance.GetComponent<BreachChargeScript>().throwGadget(strength, gameObject);
-                    } else {
-                        currentGadgetScript.throwGadget(strength, gameObject);
-                    }
+                    
+                    var grenadeInstance = PhotonNetwork.Instantiate(currentGadgetScript.getName(), transform.GetChild(2).Find("FirePoint").position, transform.GetChild(2).Find("FirePoint").rotation);
+                    grenadeInstance.transform.GetChild(0).gameObject.SetActive(true);
+                    grenadeInstance.GetComponent<ISecondaryGadget>().throwGadget(strength, gameObject);
+                    
                     strength = 0;
                     hud.decrementGrenades();
-
                 }
             }
             //Debug.Log((flashOverlay == null) + " flash overlay null???");

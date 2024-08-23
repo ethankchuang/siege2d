@@ -11,7 +11,7 @@ public class PlaceDefuser : MonoBehaviour
     public Transform placementPoint;
     public float placementTime;
     PlayerMovement playerMovement;
-    DefuserScript defuserScript;
+    //DefuserScript defuserScript;
 
     //true for testing only
     public bool hasDefuser = true;
@@ -24,7 +24,7 @@ public class PlaceDefuser : MonoBehaviour
     {
         view = GetComponent<PhotonView>();
         playerMovement = gameObject.GetComponent<PlayerMovement>();
-        defuserScript = GameObject.Find("Game").GetComponent<DefuserScript>();
+        //defuserScript = GameObject.Find("Game").GetComponent<DefuserScript>();
     }
 
     void Update()
@@ -56,13 +56,18 @@ public class PlaceDefuser : MonoBehaviour
     [PunRPC]
     public void placeDefuserHelper()
     {
-        Instantiate(defuser, placementPoint.position, transform.rotation);
-
-
+        //Instantiate(defuser, placementPoint.position, transform.rotation);
+        GameObject defuserParent = GameObject.Find("DefuserParent");
+        defuserParent.transform.position = placementPoint.position;
+        defuserParent.transform.GetChild(0).gameObject.SetActive(true);
+        defuserParent.transform.rotation = transform.rotation;
+        Debug.Log("defuserparent location " + defuserParent.transform.position);
+        Debug.Log("placement point location " + placementPoint.transform.position);
+        //Debug.Log("defuserparent location " + defuserParent.transform.position);
         GameObject.Find("Canvas").GetComponent<NewTimer>().defuserPlaced();
 
-        Debug.Log("place defuser told defuser script that defuser was placed");
-        defuserScript.defuserPlaced();
+        Debug.Log("place defuser helper called");
+        //defuserScript.defuserPlaced();
         //defuseTime.GetComponent<NewTimer>().defuserPlaced();
     } 
 }

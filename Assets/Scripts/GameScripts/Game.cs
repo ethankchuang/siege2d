@@ -109,6 +109,7 @@ public class Game : MonoBehaviour
     public void endRound(bool defWin)
     {
         createPlayerLists();
+        GameObject.Find("DefuserParent").transform.GetChild(0).gameObject.SetActive(false);
         Debug.Log("end round called!?");
         if (defWin) {
             defPoints ++;
