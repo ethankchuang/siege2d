@@ -138,10 +138,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18ad2fb142af8654aa73b2daf7ccf112, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timer: 180
+  minutes: 0
+  seconds: 0
+  RoundTimer: 0
   defuseTimer: 50
   timerText: {fileID: 7686323979034843554}
   bombPlantedText: {fileID: 611373547565157509}
+  inPrep: 0
+  timeUpEndedRound: 1
 --- !u!1 &7686323979034843555
 GameObject:
   m_ObjectHideFlags: 0

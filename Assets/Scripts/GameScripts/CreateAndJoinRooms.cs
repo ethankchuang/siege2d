@@ -36,11 +36,18 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
     }
     public void CreateRoom()
     {
+        // DOESNT CREATE ROOM LIST OBJECT WHEN U CREATE A ROOM
+
         if (createInput.text.Length >= 1)
         {
-            PhotonNetwork.CreateRoom(createInput.text, new RoomOptions() { BroadcastPropsChangeToAll = true});
+            PhotonNetwork.CreateRoom(createInput.text, new RoomOptions() { BroadcastPropsChangeToAll = true, IsVisible = true, MaxPlayers = 10});
         }
         PhotonNetwork.AutomaticallySyncScene = true;
+    }
+    public override void OnCreatedRoom()
+    {
+        Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        base.OnCreatedRoom();
     }
 
     public void Update()
@@ -54,12 +61,14 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
 
     public void OnClickPlay()
     {
-        /*for (int i = 0; i < tempList.Count; i++)
-        {
-            if (tempList[i].Name == PhotonNetwork.CurrentRoom.Name)
-            {
-                Debug.Log("tempList name and current room name are equal");
-                tempList.RemoveAt(i);
+        Debug.Log("on click play called, list size = " + roomItemList.Count);
+
+        PhotonNetwork.CurrentRoom.IsOpen = false;
+        /*for (int i = 0; i < roomItemList.Count; i++) {
+            Debug.Log("current room name" + roomItemList[i].roomName.ToString());
+            if (roomItemList[i].roomName.ToString() == PhotonNetwork.CurrentRoom.Name) {
+                Debug.Log("setting in game to true" + roomItemList[i].roomName.ToString());
+                roomItemList[i].properties["inGame"] = true;
                 break;
             }
         }*/
@@ -77,7 +86,7 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        //Debug.Log("on room list update called");
+        Debug.Log("on room list update called");
         if (Time.time >= nextUpdateTime)
         {
             nextUpdateTime = Time.time + timeBetweenUpdate;
@@ -104,10 +113,10 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
                 }
             }
         }
-        UpdateRoomList(roomList);
+        UpdateRoomList(/*roomList*/);
     }
 
-    void UpdateRoomList(List<RoomInfo> list)
+    void UpdateRoomList(/*List<RoomInfo> list*/)
     {
         foreach (RoomItem item in roomItemList)
         {

@@ -73,6 +73,8 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
     public bool hasSwapped;
     //ExitGames.Client.Photon.Hashtable playerProperties = new ExitGames.Client.Photon.Hashtable();
     Dictionary<int, GameObject> actorNumToGO = new Dictionary<int, GameObject>();
+    GameObject footsteps;
+    GameObject runSound;
     public void Start()
     {  
         view = GetComponent<PhotonView>();
@@ -118,6 +120,8 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
         isSpectating = false;
         gameTimer = GameObject.Find("Canvas").GetComponent<NewTimer>();
         inPrepPhase = true;
+        footsteps = transform.GetChild(3).gameObject;
+        runSound = transform.GetChild(4).gameObject;
     }
     [PunRPC]
     public void setMyID(int id) {
@@ -256,6 +260,20 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IShootAble
         {
             if (movement.x != 0 && movement.y != 0) rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime / math.sqrt(2));
             else rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+
+
+            if (movement != new UnityEngine.Vector2(0,0)) {
+                if (moveSpeed == sprintSpeed) {
+                    runSound.SetActive(true);
+                    footsteps.SetActive(false);
+                } else {
+                    footsteps.SetActive(true);
+                    runSound.SetActive(false);
+                }
+            } else {
+                footsteps.SetActive(false);
+                runSound.SetActive(false);
+            }
             lookDir = mousePos - rb.position;
             float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg - 90f;
             rb.rotation = angle;

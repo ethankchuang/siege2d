@@ -9,10 +9,12 @@ public class RoomItem : MonoBehaviour
 {
     public Text roomName;
     CreateAndJoinRooms manager;
+    public ExitGames.Client.Photon.Hashtable properties = new ExitGames.Client.Photon.Hashtable();
     
     private void Start()
     {
         manager = FindObjectOfType<CreateAndJoinRooms>();
+        properties["inGame"] = false;
     }
 
     public void setRoomName(String rN)
@@ -22,6 +24,10 @@ public class RoomItem : MonoBehaviour
 
     public void onClickItem()
     {
-        manager.joinRoom(roomName.text);
+        if (!(bool)properties["inGame"]) {
+            manager.joinRoom(roomName.text);
+        } else {
+            Debug.Log("already in game");
+        }
     }
 }

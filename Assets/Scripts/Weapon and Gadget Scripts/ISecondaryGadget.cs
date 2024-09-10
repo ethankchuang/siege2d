@@ -9,4 +9,5 @@ public interface ISecondaryGadget
     public string getName();
     public void throwGadget(float force, GameObject player);
     public Sprite GetSprite();
+    public void playSound();
 }

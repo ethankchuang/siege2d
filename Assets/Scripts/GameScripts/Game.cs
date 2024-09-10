@@ -150,6 +150,7 @@ public class Game : MonoBehaviour
             Debug.Log("trying to call round end screen for atk");
             if (player.GetComponent<PlayerMovement>().nickName == PhotonNetwork.LocalPlayer.NickName) {
                 player.GetComponent<PlayerMovement>().roundEndScreen(!defWin);
+                player.GetComponent<PlaceDefuser>().setCanPlace(false);
                 if (switchSides) {
                     swappingPlayer();
                     Debug.Log("swapping sides");

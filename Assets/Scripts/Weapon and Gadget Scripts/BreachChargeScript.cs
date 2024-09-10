@@ -14,6 +14,7 @@ public class BreachChargeScript : MonoBehaviour, ISecondaryGadget
     bool isMine = false;
     SoftWallScript softWallScript;
     PhotonView view;
+    [SerializeField]private AudioClip soundClip;
 
 
     public void explode()
@@ -37,6 +38,7 @@ public class BreachChargeScript : MonoBehaviour, ISecondaryGadget
             //gameObject.SetActive(false); 
             
         //}
+        playSound();
         softWallScript.RecieveHitAOE(gameObject, dmgRadius);
         view = GetComponent<PhotonView>();
         view.RPC(nameof(destroyGO), RpcTarget.All);
@@ -80,5 +82,9 @@ public class BreachChargeScript : MonoBehaviour, ISecondaryGadget
     }
     public Sprite GetSprite() {
         return GetComponent<SpriteRenderer>().sprite;
+    }
+    public void playSound() {
+        Debug.Log("play sound called");
+        transform.GetChild(1).gameObject.SetActive(true);
     }
 }

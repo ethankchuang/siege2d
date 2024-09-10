@@ -11,6 +11,7 @@ public class PlaceDefuser : MonoBehaviour
     public Transform placementPoint;
     public float placementTime;
     PlayerMovement playerMovement;
+    bool canPlace;
     //DefuserScript defuserScript;
 
     //true for testing only
@@ -22,6 +23,7 @@ public class PlaceDefuser : MonoBehaviour
 
     public void Start()
     {
+        canPlace = true;
         view = GetComponent<PhotonView>();
         playerMovement = gameObject.GetComponent<PlayerMovement>();
         //defuserScript = GameObject.Find("Game").GetComponent<DefuserScript>();
@@ -49,8 +51,14 @@ public class PlaceDefuser : MonoBehaviour
 
     public void placeDefuser()
     {
-        playerMovement.setPlayerLocker(false);
-        view.RPC("placeDefuserHelper", RpcTarget.All);
+        if (canPlace) {
+            playerMovement.setPlayerLocker(false);
+            view.RPC("placeDefuserHelper", RpcTarget.All);
+        }
+        canPlace = true;
+    }
+    public void setCanPlace(bool can) {
+        canPlace = can;
     }
 
     [PunRPC]

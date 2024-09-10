@@ -32,7 +32,7 @@ public class FlashbangScript : MonoBehaviour, ISecondaryGadget
                 throwingScript.setLightHelper(percent, maxBrightness, player.myID);
             }
         }
-
+        playSound();
         Destroy(gameObject);
     }
     public String getName()
@@ -50,5 +50,10 @@ public class FlashbangScript : MonoBehaviour, ISecondaryGadget
     }
     public Sprite GetSprite() {
         return GetComponent<SpriteRenderer>().sprite;
+    }
+    
+    public void playSound() {
+        Debug.Log("play sound called");
+        transform.GetChild(1).gameObject.SetActive(true);
     }
 }

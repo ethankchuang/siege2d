@@ -41,7 +41,7 @@ public class GrenadeScript : MonoBehaviour, ISecondaryGadget
                 throwingScript.dealDamageHelper(dmgPercent, maxDamage, player.myID);
             }
         }
-
+        playSound();
         DestroyImmediate(gameObject, true);
     }
 
@@ -65,5 +65,10 @@ public class GrenadeScript : MonoBehaviour, ISecondaryGadget
     }
     public Sprite GetSprite() {
         return GetComponent<SpriteRenderer>().sprite;
+    }
+    
+    public void playSound() {
+        Debug.Log("play sound called");
+        transform.GetChild(1).gameObject.SetActive(true);
     }
 }

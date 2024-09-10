@@ -8,6 +8,7 @@ public class FlareScript : MonoBehaviour, ISecondaryGadget
 {
     public void explode()
     {
+        playSound();
         DestroyImmediate(gameObject, true);
     }
 
@@ -28,5 +29,10 @@ public class FlareScript : MonoBehaviour, ISecondaryGadget
     }
     public Sprite GetSprite() {
         return GetComponent<SpriteRenderer>().sprite;
+    }
+    
+    public void playSound() {
+        Debug.Log("play sound called");
+        transform.GetChild(1).gameObject.SetActive(true);
     }
 }
